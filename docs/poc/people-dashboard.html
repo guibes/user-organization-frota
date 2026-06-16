@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>people dashboard — presence (wireframe)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1115;
+      --bg-card: #1a1d24;
+      --bg-card-hover: #232730;
+      --bg-input: #0f1115;
+      --border: #2a2f3a;
+      --border-strong: #3a4050;
+      --text: #e4e6eb;
+      --text-dim: #9aa0a6;
+      --text-faint: #6b7280;
+      --accent: #4ade80;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --gray: #6b7280;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Topbar */
+    .topbar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar-logo {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #0f1115; font-size: 12px;
+    }
+    .topbar-title { font-size: 14px; font-weight: 600; }
+    .topbar-sub { font-size: 11px; color: var(--text-faint); }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-left: 16px;
+    }
+    .breadcrumb a { color: var(--text-dim); text-decoration: none; }
+    .breadcrumb strong { color: var(--text); }
+
+    .topbar-spacer { flex: 1; }
+
+    .role-badge {
+      background: rgba(167,139,250,0.15);
+      color: var(--purple);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .topbar-btn {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar-btn:hover { background: #2d323d; }
+    .topbar-btn.primary {
+      background: var(--accent);
+      color: #0f1115;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 32px 60px;
+    }
+
+    /* Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .page-sub { font-size: 14px; color: var(--text-dim); margin-top: 2px; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .tab {
+      padding: 10px 16px;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 13px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+    .tab-count {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+    .tab.active .tab-count {
+      background: rgba(74,222,128,0.15);
+      border-color: rgba(74,222,128,0.3);
+      color: var(--accent);
+    }
+
+    /* KPI cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .kpi {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .kpi-trend {
+      font-size: 11px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-trend.up   { color: var(--green); }
+    .kpi-trend.down { color: var(--red); }
+    .kpi-trend.flat { color: var(--text-faint); }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+
+    /* Alerts banner */
+    .alerts {
+      background: rgba(248,113,113,0.05);
+      border: 1px solid rgba(248,113,113,0.25);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .alerts.warning {
+      background: rgba(251,191,36,0.05);
+      border-color: rgba(251,191,36,0.25);
+    }
+    .alerts-icon {
+      width: 32px; height: 32px;
+      background: rgba(248,113,113,0.15);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .alerts.warning .alerts-icon { background: rgba(251,191,36,0.15); }
+    .alerts-body { flex: 1; }
+    .alerts-title { font-size: 13px; font-weight: 600; }
+    .alerts-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .alerts-action {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Layout: list + drill-down */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      width: 260px;
+    }
+    .filter-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-chip:hover { background: var(--bg-card-hover); }
+    .filter-chip.active {
+      background: rgba(74,222,128,0.08);
+      border-color: rgba(74,222,128,0.3);
+      color: var(--accent);
+    }
+    .toolbar-spacer { flex: 1; }
+    .sort-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Table */
+    .table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .table-head {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr 1.4fr 1.5fr 1fr 0.9fr 0.7fr;
+      padding: 11px 18px;
+      background: var(--bg-input);
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-faint);
+      font-weight: 600;
+    }
+    .table-row {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr 1.4fr 1.5fr 1fr 0.9fr 0.7fr;
+      padding: 12px 18px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 150ms ease;
+      font-size: 13px;
+    }
+    .table-row:hover { background: var(--bg-card-hover); }
+    .table-row.selected {
+      background: rgba(74,222,128,0.06);
+      border-left: 3px solid var(--accent);
+      padding-left: 15px;
+    }
+    .table-row:last-child { border-bottom: 0; }
+
+    .col-person {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar-sm {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fb923c, #f87171);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #0f1115; font-size: 11px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .avatar-sm.green  { background: linear-gradient(135deg, #4ade80, #60a5fa); }
+    .avatar-sm.blue   { background: linear-gradient(135deg, #60a5fa, #a78bfa); }
+    .avatar-sm.purple { background: linear-gradient(135deg, #a78bfa, #f87171); }
+    .avatar-sm.yellow { background: linear-gradient(135deg, #fbbf24, #fb923c); }
+    .avatar-sm.gray   { background: linear-gradient(135deg, #6b7280, #9aa0a6); }
+
+    .person-info { min-width: 0; }
+    .person-name {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .person-meta {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 1px;
+    }
+
+    .role-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      background: rgba(96,165,250,0.12);
+      color: var(--blue);
+    }
+    .role-pill.frontend { background: rgba(167,139,250,0.12); color: var(--purple); }
+    .role-pill.qa       { background: rgba(251,191,36,0.12); color: var(--yellow); }
+    .role-pill.devops   { background: rgba(251,146,60,0.12); color: var(--orange); }
+    .role-pill.design   { background: rgba(74,222,128,0.12); color: var(--green); }
+
+    /* Progress bar in row */
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      max-width: 120px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--blue));
+      border-radius: 3px;
+    }
+    .progress-text {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: "SF Mono", Menlo, monospace;
+      flex-shrink: 0;
+    }
+
+    /* Day indicator */
+    .day-indicator {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .day-indicator strong { color: var(--text); }
+
+    /* Status badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .status-badge.on-track  { background: rgba(74,222,128,0.12); color: var(--green); }
+    .status-badge.slow      { background: rgba(251,191,36,0.12); color: var(--yellow); }
+    .status-badge.stalled   { background: rgba(248,113,113,0.12); color: var(--red); }
+    .status-badge.done      { background: rgba(96,165,250,0.12); color: var(--blue); }
+    .status-badge.paused    { background: rgba(107,114,128,0.12); color: var(--gray); }
+
+    .last-activity {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .last-activity.stale { color: var(--red); }
+
+    .col-actions {
+      display: flex;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+    .icon-btn {
+      width: 26px; height: 26px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .icon-btn:hover { color: var(--text); background: var(--bg-input); }
+
+    /* Drill-down panel (right) */
+    .drill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      position: sticky;
+      top: 75px;
+      max-height: calc(100vh - 95px);
+      overflow-y: auto;
+    }
+    .drill-head {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .drill-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fb923c, #f87171);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #0f1115; font-size: 16px;
+    }
+    .drill-name { font-size: 16px; font-weight: 600; }
+    .drill-sub  { font-size: 12px; color: var(--text-dim); }
+    .drill-close {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .drill-section { margin-bottom: 18px; }
+    .drill-section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-faint);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Mini KPI in drill */
+    .drill-kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .drill-kpi {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .drill-kpi-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .drill-kpi-label {
+      font-size: 10px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    /* Sections progress mini-list */
+    .sections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sec-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+    }
+    .sec-status {
+      width: 14px; height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border-strong);
+    }
+    .sec-status.done {
+      background: var(--accent);
+      border-color: var(--accent);
+      position: relative;
+    }
+    .sec-status.done::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #0f1115;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .sec-status.in-progress {
+      background: rgba(74,222,128,0.2);
+      border-color: var(--accent);
+    }
+    .sec-status.locked { opacity: 0.4; }
+    .sec-name { flex: 1; color: var(--text-dim); }
+    .sec-item.done .sec-name { text-decoration: line-through; opacity: 0.6; }
+    .sec-time {
+      font-size: 10px;
+      color: var(--text-faint);
+      font-family: "SF Mono", Menlo, monospace;
+    }
+
+    /* Alert in drill */
+    .drill-alert {
+      background: rgba(251,191,36,0.06);
+      border: 1px solid rgba(251,191,36,0.25);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .drill-alert.red {
+      background: rgba(248,113,113,0.06);
+      border-color: rgba(248,113,113,0.25);
+    }
+    .drill-alert-icon { font-size: 14px; flex-shrink: 0; }
+    .drill-alert strong { color: var(--text); }
+
+    /* Team support row */
+    .support-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .support-row:first-of-type { border-top: 0; }
+    .support-role {
+      font-size: 10px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      flex-shrink: 0;
+      width: 50px;
+    }
+    .support-name { color: var(--text); flex: 1; }
+    .support-meta { font-size: 11px; color: var(--text-faint); }
+
+    /* Actions */
+    .drill-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .drill-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .drill-btn:hover { background: var(--bg-card-hover); }
+    .drill-btn.slack { background: #4a154b; color: #fff; border-color: #6b1f6c; }
+    .drill-btn.primary { background: var(--accent); color: #0f1115; border-color: var(--accent); font-weight: 500; }
+
+    .wireframe-note {
+      position: fixed;
+      bottom: 12px; right: 12px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      color: var(--text-faint);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+  
+    /* === Accessibility: focus-visible ring (added by visual QA pass) === */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    .btn:focus-visible,
+    .topbar-btn:focus-visible,
+    [role="button"]:focus-visible {
+      outline-offset: 3px;
+    }
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+    }
+
+  
+    /* === Polish: scrollbar + typography refinements (visual QA pass) === */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 6px;
+      border: 2px solid var(--bg);
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+    ::selection {
+      background: rgba(74,222,128,0.25);
+      color: var(--text);
+    }
+
+    body {
+      font-feature-settings: "cv11", "ss01", "ss03";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Tabular nums for stats/metrics */
+    .kpi-value, .progress-text, .stat-value, .num,
+    [class*="-num"], [class*="-count"], code {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slightly improved card hover micro-interaction */
+    .card:hover, .kpi:hover {
+      transition: background 200ms ease, transform 200ms ease, border-color 200ms ease;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">P</div>
+      <div>
+        <div class="topbar-title">presence · people ops</div>
+        <div class="topbar-sub">dashboard</div>
+      </div>
+    </div>
+    <div class="breadcrumb">
+      <a href="presence-wireframe.html">presence</a> / admin / <strong>people dashboard</strong>
+    </div>
+    <div class="topbar-spacer"></div>
+    <span class="role-badge">👤 People Ops</span>
+    <a class="topbar-btn" href="people-stats.html">📊 stats</a>
+    <a class="topbar-btn" href="people-dashboard-empty.html" title="ver versão sem dados">🆕 empty</a>
+    <a class="topbar-btn" href="onboarding-template-editor.html">⚙ templates</a>
+    <button class="topbar-btn primary">+ onboard alguém</button>
+  </div>
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <div>
+        <h1>people dashboard</h1>
+        <div class="page-sub">acompanhe o onboarding de quem chegou nos últimos 60 dias</div>
+      </div>
+      <div style="font-size:12px; color:var(--text-faint);">
+        última atualização: agora · sync automático a cada 30s
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">colabs em onboarding</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-trend up">▲ 3 vs mês passado</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">% conclusão (30d)</div>
+        <div class="kpi-value">76<span style="font-size:18px; color:var(--text-dim);">%</span></div>
+        <div class="kpi-trend down">▼ 4pp · meta: 80%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">tempo médio</div>
+        <div class="kpi-value">24<span style="font-size:18px; color:var(--text-dim);">d</span></div>
+        <div class="kpi-trend up">▲ dentro do range 21-30</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">NPS onboarding</div>
+        <div class="kpi-value">+42</div>
+        <div class="kpi-trend up">▲ 3 · meta: ≥40</div>
+      </div>
+      <div class="kpi" style="border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.04);">
+        <div class="kpi-label" style="color: var(--red);">requer atenção</div>
+        <div class="kpi-value" style="color: var(--red);">3</div>
+        <div class="kpi-sub">parados &gt; 3 dias</div>
+      </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alerts">
+      <div class="alerts-icon">⚠️</div>
+      <div class="alerts-body">
+        <div class="alerts-title">3 colabs travados há mais de 3 dias</div>
+        <div class="alerts-desc">Bruno Lima (seção 5), Carolina Lopes (seção 2), Diego Ferreira (seção 8). Considere ping no buddy ou conversa 1:1.</div>
+      </div>
+      <button class="alerts-action">ver detalhes →</button>
+    </div>
+
+    <div class="alerts warning">
+      <div class="alerts-icon">📊</div>
+      <div class="alerts-body">
+        <div class="alerts-title">seção "a stack" tem tempo médio 52min vs estimado 40min</div>
+        <div class="alerts-desc">5 colabs gastaram &gt; 60min nesta seção nos últimos 30 dias. Considere quebrar em 2 ou revisar conteúdo.</div>
+      </div>
+      <a class="alerts-action" href="onboarding-template-editor.html">revisar template →</a>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active">
+        <span>em onboarding</span>
+        <span class="tab-count">12</span>
+      </div>
+      <div class="tab">
+        <span>formados (90d)</span>
+        <span class="tab-count">8</span>
+      </div>
+      <div class="tab">
+        <span>pausados</span>
+        <span class="tab-count">2</span>
+      </div>
+      <div class="tab">
+        <span>desligados</span>
+        <span class="tab-count">1</span>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <input class="search-input" placeholder="🔍 buscar nome, role, buddy..." />
+      <span class="filter-chip active">todos</span>
+      <span class="filter-chip">🟢 on-track</span>
+      <span class="filter-chip">🟡 lento</span>
+      <span class="filter-chip">🔴 travado</span>
+      <span class="filter-chip">⏸️ pausado</span>
+      <span class="filter-chip">· backend (5)</span>
+      <span class="filter-chip">· frontend (3)</span>
+      <span class="filter-chip">· qa (2)</span>
+      <span class="filter-chip">· devops (1)</span>
+      <span class="filter-chip">· design (1)</span>
+      <div class="toolbar-spacer"></div>
+      <button class="sort-btn">📊 ordenar: progresso ▼</button>
+    </div>
+
+    <!-- LAYOUT: table + drill-down -->
+    <div class="layout">
+
+      <!-- LEFT: table -->
+      <div class="table">
+        <div class="table-head">
+          <div>colaborador</div>
+          <div>role</div>
+          <div>progresso</div>
+          <div>buddy · EM</div>
+          <div>status</div>
+          <div>última atividade</div>
+          <div></div>
+        </div>
+
+        <!-- Row 1: Aline (current selected) -->
+        <div class="table-row selected" onclick="selectRow(this, 'aline')">
+          <div class="col-person">
+            <div class="avatar-sm">AR</div>
+            <div class="person-info">
+              <div class="person-name">Aline Rocha</div>
+              <div class="person-meta">@alinerocha · dia 5/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill">Backend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:58%;"></div></div>
+            <div class="progress-text">7/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Geovane</strong> · Rafael
+          </div>
+          <div><span class="status-badge on-track">🟢 on-track</span></div>
+          <div class="last-activity">há 2h</div>
+          <div class="col-actions">
+            <button class="icon-btn" title="abrir manual">📖</button>
+            <button class="icon-btn" title="DM Slack">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="table-row" onclick="selectRow(this, 'pedro')">
+          <div class="col-person">
+            <div class="avatar-sm green">PM</div>
+            <div class="person-info">
+              <div class="person-name">Pedro Moreira</div>
+              <div class="person-meta">@pedromoreira · dia 8/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill frontend">Frontend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:75%;"></div></div>
+            <div class="progress-text">9/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Maria</strong> · Rafael
+          </div>
+          <div><span class="status-badge on-track">🟢 on-track</span></div>
+          <div class="last-activity">há 30min</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 3: stalled -->
+        <div class="table-row" onclick="selectRow(this, 'bruno')">
+          <div class="col-person">
+            <div class="avatar-sm blue">BL</div>
+            <div class="person-info">
+              <div class="person-name">Bruno Lima</div>
+              <div class="person-meta">@brunolima · dia 18/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill">Backend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:33%;"></div></div>
+            <div class="progress-text">4/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">João</strong> · Rafael
+          </div>
+          <div><span class="status-badge stalled">🔴 travado</span></div>
+          <div class="last-activity stale">há 5 dias</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 4: slow -->
+        <div class="table-row" onclick="selectRow(this, 'carolina')">
+          <div class="col-person">
+            <div class="avatar-sm purple">CL</div>
+            <div class="person-info">
+              <div class="person-name">Carolina Lopes</div>
+              <div class="person-meta">@carolopes · dia 12/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill qa">QA</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:17%;"></div></div>
+            <div class="progress-text">2/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Ana</strong> · Camila
+          </div>
+          <div><span class="status-badge stalled">🔴 travado</span></div>
+          <div class="last-activity stale">há 4 dias</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="table-row" onclick="selectRow(this, 'felipe')">
+          <div class="col-person">
+            <div class="avatar-sm yellow">FS</div>
+            <div class="person-info">
+              <div class="person-name">Felipe Santos</div>
+              <div class="person-meta">@felipesantos · dia 3/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill devops">DevOps</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:25%;"></div></div>
+            <div class="progress-text">3/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Lucas</strong> · Rafael
+          </div>
+          <div><span class="status-badge on-track">🟢 on-track</span></div>
+          <div class="last-activity">há 1h</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 6: slow -->
+        <div class="table-row" onclick="selectRow(this, 'ricardo')">
+          <div class="col-person">
+            <div class="avatar-sm">RC</div>
+            <div class="person-info">
+              <div class="person-name">Ricardo Castro</div>
+              <div class="person-meta">@ricardocastro · dia 22/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill">Backend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:67%;"></div></div>
+            <div class="progress-text">8/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Geovane</strong> · João
+          </div>
+          <div><span class="status-badge slow">🟡 lento</span></div>
+          <div class="last-activity">há 2 dias</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 7 -->
+        <div class="table-row" onclick="selectRow(this, 'juliana')">
+          <div class="col-person">
+            <div class="avatar-sm green">JA</div>
+            <div class="person-info">
+              <div class="person-name">Juliana Andrade</div>
+              <div class="person-meta">@juliana_andrade · dia 14/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill design">Designer</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:83%;"></div></div>
+            <div class="progress-text">10/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Camila</strong> · Rafael
+          </div>
+          <div><span class="status-badge on-track">🟢 on-track</span></div>
+          <div class="last-activity">há 4h</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 8: stalled -->
+        <div class="table-row" onclick="selectRow(this, 'diego')">
+          <div class="col-person">
+            <div class="avatar-sm purple">DF</div>
+            <div class="person-info">
+              <div class="person-name">Diego Ferreira</div>
+              <div class="person-meta">@diegoferreira · dia 26/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill frontend">Mobile</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:67%;"></div></div>
+            <div class="progress-text">8/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Maria</strong> · Rafael
+          </div>
+          <div><span class="status-badge stalled">🔴 travado</span></div>
+          <div class="last-activity stale">há 6 dias</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 9 -->
+        <div class="table-row" onclick="selectRow(this, 'tatiane')">
+          <div class="col-person">
+            <div class="avatar-sm yellow">TR</div>
+            <div class="person-info">
+              <div class="person-name">Tatiane Ribeiro</div>
+              <div class="person-meta">@tatianeribeiro · dia 6/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill qa">QA</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:50%;"></div></div>
+            <div class="progress-text">6/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Ana</strong> · Camila
+          </div>
+          <div><span class="status-badge on-track">🟢 on-track</span></div>
+          <div class="last-activity">há 15min</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 10 -->
+        <div class="table-row" onclick="selectRow(this, 'gabriel')">
+          <div class="col-person">
+            <div class="avatar-sm blue">GS</div>
+            <div class="person-info">
+              <div class="person-name">Gabriel Silva</div>
+              <div class="person-meta">@gabrielsilva · dia 1/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill frontend">Frontend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+            <div class="progress-text">0/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Maria</strong> · Rafael
+          </div>
+          <div><span class="status-badge on-track">🟢 dia 1</span></div>
+          <div class="last-activity">há 3h</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 11 -->
+        <div class="table-row" onclick="selectRow(this, 'marcela')">
+          <div class="col-person">
+            <div class="avatar-sm green">MV</div>
+            <div class="person-info">
+              <div class="person-name">Marcela Veiga</div>
+              <div class="person-meta">@marcelaveiga · dia 28/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill">Backend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:92%;"></div></div>
+            <div class="progress-text">11/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">Geovane</strong> · Rafael
+          </div>
+          <div><span class="status-badge on-track">🟢 quase formando 🎓</span></div>
+          <div class="last-activity">há 5h</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+        <!-- Row 12 -->
+        <div class="table-row" onclick="selectRow(this, 'henrique')">
+          <div class="col-person">
+            <div class="avatar-sm gray">HM</div>
+            <div class="person-info">
+              <div class="person-name">Henrique Martins</div>
+              <div class="person-meta">@henrique_m · dia 10/30</div>
+            </div>
+          </div>
+          <div><span class="role-pill">Backend</span></div>
+          <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:42%;"></div></div>
+            <div class="progress-text">5/12</div>
+          </div>
+          <div class="person-meta">
+            <strong style="color:var(--text);">João</strong> · Rafael
+          </div>
+          <div><span class="status-badge slow">🟡 lento</span></div>
+          <div class="last-activity">há 1 dia</div>
+          <div class="col-actions">
+            <button class="icon-btn">📖</button>
+            <button class="icon-btn">💬</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: drill-down (Aline selected by default) -->
+      <aside class="drill" id="drill">
+
+        <div class="drill-head">
+          <div class="drill-avatar">AR</div>
+          <div>
+            <div class="drill-name">Aline Rocha</div>
+            <div class="drill-sub">Backend Engineer · @team-kernel · dia 5/30</div>
+          </div>
+          <button class="drill-close">×</button>
+        </div>
+
+        <!-- Mini KPIs -->
+        <div class="drill-section">
+          <div class="drill-section-title">progresso geral</div>
+          <div class="progress" style="margin-bottom: 10px;">
+            <div class="progress-bar" style="max-width: 100%;"><div class="progress-fill" style="width:58%;"></div></div>
+            <div class="progress-text">7/12 · 58%</div>
+          </div>
+          <div class="drill-kpis">
+            <div class="drill-kpi">
+              <div class="drill-kpi-value">28</div>
+              <div class="drill-kpi-label">edits</div>
+            </div>
+            <div class="drill-kpi">
+              <div class="drill-kpi-value">12</div>
+              <div class="drill-kpi-label">comments rec.</div>
+            </div>
+            <div class="drill-kpi">
+              <div class="drill-kpi-value">5d</div>
+              <div class="drill-kpi-label">no manual</div>
+            </div>
+            <div class="drill-kpi">
+              <div class="drill-kpi-value">3</div>
+              <div class="drill-kpi-label">cafés feitos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sections progress -->
+        <div class="drill-section">
+          <div class="drill-section-title">por seção</div>
+          <div class="sections-list">
+            <div class="sec-item done">
+              <div class="sec-status done"></div>
+              <div class="sec-name">1. bem-vindo</div>
+              <div class="sec-time">12 min</div>
+            </div>
+            <div class="sec-item done">
+              <div class="sec-status done"></div>
+              <div class="sec-name">2. setup do laptop</div>
+              <div class="sec-time">28 min</div>
+            </div>
+            <div class="sec-item done">
+              <div class="sec-status done"></div>
+              <div class="sec-name">3. contas & acessos</div>
+              <div class="sec-time">19 min</div>
+            </div>
+            <div class="sec-item done">
+              <div class="sec-status done"></div>
+              <div class="sec-name">4. conheça o time</div>
+              <div class="sec-time">31 min</div>
+            </div>
+            <div class="sec-item" style="background: rgba(74,222,128,0.05); border-color: rgba(74,222,128,0.2);">
+              <div class="sec-status in-progress"></div>
+              <div class="sec-name" style="color: var(--accent);"><strong>5. a stack</strong> · em andamento</div>
+              <div class="sec-time">38 min</div>
+            </div>
+            <div class="sec-item done">
+              <div class="sec-status done"></div>
+              <div class="sec-name">6. rituais</div>
+              <div class="sec-time">22 min</div>
+            </div>
+            <div class="sec-item done">
+              <div class="sec-status done"></div>
+              <div class="sec-name">7. produto frota162</div>
+              <div class="sec-time">35 min</div>
+            </div>
+            <div class="sec-item">
+              <div class="sec-status"></div>
+              <div class="sec-name">8. seu primeiro MR</div>
+              <div class="sec-time">~ 2h</div>
+            </div>
+            <div class="sec-item">
+              <div class="sec-status locked"></div>
+              <div class="sec-name" style="opacity:0.5;">9. quiz · você pegou? 🔒</div>
+              <div class="sec-time">15 min</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health check -->
+        <div class="drill-section">
+          <div class="drill-section-title">health check</div>
+          <div class="drill-alert">
+            <div class="drill-alert-icon">💡</div>
+            <div>
+              <strong>tudo no ritmo.</strong> última atividade há 2h, comentários ativos com o buddy, MR aberto ontem. Próximo marco: <strong>primeiro MR</strong> (seção 8).
+            </div>
+          </div>
+        </div>
+
+        <!-- Team support -->
+        <div class="drill-section">
+          <div class="drill-section-title">rede de apoio</div>
+          <div class="support-row">
+            <div class="support-role">buddy</div>
+            <div class="support-name"><strong>Geovane Guibes</strong></div>
+            <div class="support-meta">14 comments</div>
+          </div>
+          <div class="support-row">
+            <div class="support-role">EM</div>
+            <div class="support-name"><strong>Rafael Souza</strong></div>
+            <div class="support-meta">9 comments</div>
+          </div>
+          <div class="support-row">
+            <div class="support-role">tech lead</div>
+            <div class="support-name">João Pereira</div>
+            <div class="support-meta">3 comments</div>
+          </div>
+          <div class="support-row">
+            <div class="support-role">peers</div>
+            <div class="support-name">Maria Silva, Ricardo Castro</div>
+            <div class="support-meta">5 comments</div>
+          </div>
+        </div>
+
+        <!-- Drive sync -->
+        <div class="drill-section">
+          <div class="drill-section-title">drive</div>
+          <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--text-dim);">
+            📄 <a href="#" style="color:var(--blue); text-decoration:none;">Docs/Onboarding/Aline-Rocha.gdoc</a><br>
+            <span style="font-size:11px;color:var(--text-faint);">última sync: há 30s ✓ · 28 edits sincronizadas</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="drill-section">
+          <div class="drill-section-title">ações</div>
+          <div class="drill-actions">
+            <a class="drill-btn primary" href="onboarding-manual.html">📖 abrir manual</a>
+            <button class="drill-btn slack">💬 DM no Slack</button>
+            <button class="drill-btn">📅 marcar 1:1</button>
+            <button class="drill-btn">⏸️ pausar onboard</button>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+  <div class="wireframe-note">wireframe · people dashboard · admin · RFC-0001</div>
+
+  <script>
+    function selectRow(el, id) {
+      document.querySelectorAll(".table-row").forEach(r => r.classList.remove("selected"));
+      el.classList.add("selected");
+      // In production: load drill-down data for `id`
+      console.log(`[drill] loading: ${id}`);
+    }
+
+    // Tabs
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+      });
+    });
+
+    // Filter chips
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        // First 5 chips are exclusive (status filters)
+        const isStatus = ["todos", "🟢 on-track", "🟡 lento", "🔴 travado", "⏸️ pausado"].some(
+          t => chip.textContent.trim() === t
+        );
+        if (isStatus) {
+          document.querySelectorAll(".filter-chip").forEach((c, i) => {
+            if (i < 5) c.classList.remove("active");
+          });
+        }
+        chip.classList.toggle("active");
+      });
+    });
+  </script>
+</body>
+</html>

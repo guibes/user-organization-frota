@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>seu manual de onboarding — frota 162 (wireframe)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1115;
+      --bg-card: #1a1d24;
+      --bg-card-hover: #232730;
+      --bg-input: #0f1115;
+      --border: #2a2f3a;
+      --border-strong: #3a4050;
+      --text: #e4e6eb;
+      --text-dim: #9aa0a6;
+      --text-faint: #6b7280;
+      --accent: #4ade80;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --gray: #6b7280;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Layout: 3 columns — TOC | content | activity */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr 320px;
+      min-height: 100vh;
+    }
+
+    /* TOC (left sidebar) */
+    .toc {
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      padding: 24px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .toc-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc-logo {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #0f1115; font-size: 13px;
+    }
+    .toc-brand-text { font-size: 14px; font-weight: 600; }
+    .toc-brand-sub { font-size: 11px; color: var(--text-faint); }
+
+    .progress-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+    }
+    .progress-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .progress-stats {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .progress-stats .num { color: var(--accent); }
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 58%;
+      background: linear-gradient(90deg, var(--accent), var(--blue));
+      border-radius: 3px;
+    }
+    .progress-eta {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 6px;
+    }
+
+    .toc-section {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-faint);
+      margin: 18px 0 8px;
+      font-weight: 600;
+    }
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .toc-link:hover {
+      background: var(--bg-card-hover);
+      color: var(--text);
+    }
+    .toc-link.active {
+      background: rgba(74,222,128,0.1);
+      color: var(--accent);
+    }
+    .toc-link.done {
+      color: var(--text-faint);
+      text-decoration: line-through;
+    }
+    .toc-check {
+      width: 14px; height: 14px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 3px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .toc-link.done .toc-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .toc-link.done .toc-check::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #0f1115;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .toc-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+    }
+    .toc-footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      display: block;
+      padding: 4px 0;
+    }
+    .toc-footer a:hover { color: var(--text); }
+
+    /* Main content */
+    .content {
+      padding: 28px 48px 80px;
+      max-width: 820px;
+      width: 100%;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+    .breadcrumb a { color: var(--text-dim); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    h1.page-title {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .page-meta {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+    .page-meta .pill {
+      background: rgba(96,165,250,0.12);
+      color: var(--blue);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    /* Doc owner banner */
+    .doc-owner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 20px 0 32px;
+    }
+    .doc-owner .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fb923c, #f87171);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #0f1115; font-size: 14px;
+    }
+    .doc-owner-text { flex: 1; }
+    .doc-owner-name { font-size: 14px; font-weight: 600; }
+    .doc-owner-sub { font-size: 12px; color: var(--text-dim); }
+    .drive-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .drive-link:hover { background: #2d323d; }
+
+    /* Section */
+    .section {
+      margin-bottom: 44px;
+      padding-top: 8px;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .section-num {
+      width: 28px; height: 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .section.done .section-num {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0f1115;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .section-est {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-faint);
+      background: var(--bg-card);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .section-body {
+      margin-left: 40px;
+    }
+    .section-body p {
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    .section-body strong { color: var(--text); }
+
+    /* Editable block (Notion-style) */
+    .editable {
+      background: rgba(167,139,250,0.05);
+      border-left: 3px solid var(--purple);
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      position: relative;
+    }
+    .editable-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--purple);
+      margin-bottom: 6px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .editable-content[contenteditable] {
+      outline: none;
+      min-height: 24px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .editable-content[contenteditable]:focus {
+      background: rgba(167,139,250,0.08);
+      padding: 4px 6px;
+      margin: -4px -6px;
+      border-radius: 4px;
+    }
+    .editable-placeholder { color: var(--text-faint); font-style: italic; }
+
+    /* Checklist items */
+    .task {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+    .task:hover { background: var(--bg-card-hover); }
+    .task.done { opacity: 0.55; }
+    .task.done .task-title { text-decoration: line-through; }
+    .task-check {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border-strong);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      position: relative;
+    }
+    .task.done .task-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .task.done .task-check::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #0f1115;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .task-body { flex: 1; }
+    .task-title { font-size: 14px; font-weight: 500; }
+    .task-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .task-action {
+      background: var(--accent);
+      color: #0f1115;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      align-self: center;
+      flex-shrink: 0;
+    }
+    .task-action.secondary {
+      background: var(--bg-card-hover);
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+    }
+    .task-action.slack-btn { background: #4a154b; color: #fff; }
+    .task-action.gitlab-btn { background: #fc6d26; color: #fff; }
+
+    /* Quiz card */
+    .quiz {
+      background: rgba(96,165,250,0.05);
+      border: 1px solid rgba(96,165,250,0.2);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 18px 0;
+    }
+    .quiz-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .quiz-q {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .quiz-opt:hover { background: var(--bg-card-hover); }
+    .quiz-opt.correct {
+      background: rgba(74,222,128,0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .quiz-opt.wrong {
+      background: rgba(248,113,113,0.08);
+      border-color: var(--red);
+      color: var(--red);
+    }
+    .quiz-feedback {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+      padding-left: 4px;
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+
+    /* Embed card (video, form) */
+    .embed {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+      background: var(--bg-card);
+    }
+    .embed-head {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .embed-icon {
+      width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+    .embed-video {
+      aspect-ratio: 16/9;
+      background:
+        radial-gradient(circle at center, rgba(96,165,250,0.15), transparent 70%),
+        linear-gradient(135deg, #1a1d24, #0f1115);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+    }
+    .play-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.95);
+      display: flex; align-items: center; justify-content: center;
+      color: #0f1115;
+      font-size: 22px;
+      padding-left: 4px;
+    }
+    .embed-title {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      font-size: 13px;
+      color: #fff;
+      background: rgba(0,0,0,0.6);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* Inline comment threads */
+    .comment-block {
+      margin: 16px 0 16px 16px;
+      padding-left: 16px;
+      border-left: 2px solid var(--yellow);
+      background: rgba(251,191,36,0.04);
+      border-radius: 0 6px 6px 0;
+      padding: 12px 14px;
+    }
+    .comment-block-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--yellow);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .comment-thread { display: flex; flex-direction: column; gap: 10px; }
+    .comment {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .comment .avatar-sm {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #0f1115; font-size: 10px;
+      flex-shrink: 0;
+    }
+    .comment .avatar-sm.orange { background: linear-gradient(135deg, #fb923c, #f87171); }
+    .comment .avatar-sm.green { background: linear-gradient(135deg, #4ade80, #60a5fa); }
+    .comment .avatar-sm.purple { background: linear-gradient(135deg, #a78bfa, #f87171); }
+    .comment-body { flex: 1; }
+    .comment-head {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .comment-author { font-weight: 600; font-size: 12px; }
+    .comment-time { font-size: 11px; color: var(--text-faint); }
+    .comment-text { font-size: 13px; color: var(--text-dim); }
+    .comment-text strong { color: var(--text); }
+    .comment-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .comment-actions span { cursor: pointer; }
+    .comment-actions span:hover { color: var(--blue); }
+
+    .comment-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(251,191,36,0.15);
+    }
+    .comment-input input {
+      flex: 1;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .comment-input input:focus { outline: none; border-color: var(--yellow); }
+    .comment-input button {
+      background: var(--yellow);
+      color: #0f1115;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* Live cursors / collaborators (top right of doc) */
+    .live-collabs {
+      display: flex;
+      gap: -4px;
+      margin-left: auto;
+    }
+    .live-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #0f1115; font-size: 11px;
+      margin-left: -8px;
+      position: relative;
+    }
+    .live-avatar:first-child { margin-left: 0; }
+    .live-avatar.purple { background: linear-gradient(135deg, #a78bfa, #f87171); }
+    .live-avatar.green { background: linear-gradient(135deg, #4ade80, #60a5fa); }
+    .live-avatar.orange { background: linear-gradient(135deg, #fb923c, #f87171); }
+    .live-avatar::after {
+      content: "";
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border: 1.5px solid var(--bg-card);
+      border-radius: 50%;
+    }
+
+    /* Activity sidebar (right) */
+    .activity {
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      padding: 24px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .activity-tab {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px;
+      margin-bottom: 18px;
+    }
+    .activity-tab span {
+      flex: 1;
+      text-align: center;
+      padding: 5px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: var(--text-dim);
+      cursor: pointer;
+    }
+    .activity-tab span.active {
+      background: var(--bg-card-hover);
+      color: var(--text);
+    }
+
+    .activity-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+      margin: 14px 0 10px;
+      font-weight: 600;
+    }
+    .activity-section-title:first-child { margin-top: 0; }
+
+    .contrib {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .contrib:first-of-type { border-top: 0; }
+    .contrib-icon {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      background: var(--bg-input);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .contrib-body { flex: 1; }
+    .contrib-text { color: var(--text-dim); line-height: 1.5; }
+    .contrib-text strong { color: var(--text); }
+    .contrib-meta {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 2px;
+    }
+
+    .top-contribs {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .top-contrib-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 12px;
+    }
+    .top-contrib-row .avatar-sm {
+      width: 22px; height: 22px;
+      font-size: 10px;
+    }
+    .top-contrib-name { flex: 1; }
+    .top-contrib-count {
+      font-size: 11px;
+      color: var(--text-faint);
+      font-family: "SF Mono", Menlo, monospace;
+    }
+
+    /* Floating "@ mention" / actions bar */
+    .floating-actions {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+      z-index: 50;
+    }
+    .floating-actions input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      width: 240px;
+    }
+    .floating-actions button {
+      background: var(--accent);
+      color: #0f1115;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .wireframe-note {
+      position: fixed;
+      bottom: 12px; right: 12px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      color: var(--text-faint);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+  
+    /* === Accessibility: focus-visible ring (added by visual QA pass) === */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    .btn:focus-visible,
+    .topbar-btn:focus-visible,
+    [role="button"]:focus-visible {
+      outline-offset: 3px;
+    }
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+    }
+
+  
+    /* === Polish: scrollbar + typography refinements (visual QA pass) === */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 6px;
+      border: 2px solid var(--bg);
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+    ::selection {
+      background: rgba(74,222,128,0.25);
+      color: var(--text);
+    }
+
+    body {
+      font-feature-settings: "cv11", "ss01", "ss03";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Tabular nums for stats/metrics */
+    .kpi-value, .progress-text, .stat-value, .num,
+    [class*="-num"], [class*="-count"], code {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slightly improved card hover micro-interaction */
+    .card:hover, .kpi:hover {
+      transition: background 200ms ease, transform 200ms ease, border-color 200ms ease;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- ============ TOC (LEFT) ============ -->
+    <aside class="toc">
+      <div class="toc-brand">
+        <div class="toc-logo">P</div>
+        <div>
+          <div class="toc-brand-text">presence</div>
+          <div class="toc-brand-sub">onboarding</div>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-label">seu progresso</div>
+        <div class="progress-stats"><span class="num">7</span>/12 etapas</div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <div class="progress-eta">~ 2h pra terminar tudo</div>
+      </div>
+
+      <div class="toc-section">primeira semana</div>
+      <a class="toc-link done" onclick="scrollTo('sec-welcome')">
+        <span class="toc-check"></span> 1. bem-vindo
+      </a>
+      <a class="toc-link done" onclick="scrollTo('sec-setup')">
+        <span class="toc-check"></span> 2. setup do laptop
+      </a>
+      <a class="toc-link done" onclick="scrollTo('sec-accounts')">
+        <span class="toc-check"></span> 3. contas & acessos
+      </a>
+      <a class="toc-link active" onclick="scrollTo('sec-team')">
+        <span class="toc-check"></span> 4. conheça o time
+      </a>
+      <a class="toc-link" onclick="scrollTo('sec-stack')">
+        <span class="toc-check"></span> 5. a stack
+      </a>
+
+      <div class="toc-section">primeiro mês</div>
+      <a class="toc-link done" onclick="scrollTo('sec-rituals')">
+        <span class="toc-check"></span> 6. rituais & rituais
+      </a>
+      <a class="toc-link done" onclick="scrollTo('sec-product')">
+        <span class="toc-check"></span> 7. produto frota162
+      </a>
+      <a class="toc-link" onclick="scrollTo('sec-first-mr')">
+        <span class="toc-check"></span> 8. seu primeiro MR
+      </a>
+      <a class="toc-link done" onclick="scrollTo('sec-quiz')">
+        <span class="toc-check"></span> 9. quiz: você pegou?
+      </a>
+
+      <div class="toc-section">contínuo</div>
+      <a class="toc-link done" onclick="scrollTo('sec-feedback')">
+        <span class="toc-check"></span> 10. feedback do onboarding
+      </a>
+      <a class="toc-link" onclick="scrollTo('sec-buddy')">
+        <span class="toc-check"></span> 11. seu buddy
+      </a>
+      <a class="toc-link" onclick="scrollTo('sec-graduation')">
+        <span class="toc-check"></span> 12. formatura 🎓
+      </a>
+
+      <div class="toc-footer">
+        <a href="presence-wireframe.html">← mapa do time</a>
+        <a href="presence-settings.html">⚙ settings</a>
+      </div>
+    </aside>
+
+    <!-- ============ CONTENT (CENTER) ============ -->
+    <main class="content">
+      <div class="breadcrumb"><a href="presence-wireframe.html">presence</a> / onboarding / <strong>seu manual</strong></div>
+
+      <div style="display:flex; align-items:flex-end; gap:14px;">
+        <div>
+          <h1 class="page-title">manual de onboarding · Aline Rocha</h1>
+          <div class="page-meta">
+            iniciado em 12/06/2026 · dia 5 de 30
+            <span class="pill">Backend Engineer</span>
+            <span class="pill">@team-kernel</span>
+          </div>
+        </div>
+        <div class="live-collabs" title="editando agora">
+          <div class="live-avatar orange" title="Aline (você)">AR</div>
+          <div class="live-avatar purple" title="Rafael (EM)">RS</div>
+          <div class="live-avatar green" title="Geovane (buddy)">GG</div>
+        </div>
+      </div>
+
+      <div class="doc-owner">
+        <div class="avatar">AR</div>
+        <div class="doc-owner-text">
+          <div class="doc-owner-name">esse manual é seu, Aline.</div>
+          <div class="doc-owner-sub">edite, anote, marque tarefas. quem te apoia comenta nas margens. histórico de tudo na barra direita.</div>
+        </div>
+        <a class="drive-link" href="#" title="abrir no Google Docs">
+          📄 abrir no Drive
+        </a>
+        <a class="drive-link" href="onboarding-template-editor.html" title="editar template (admin/people)" style="margin-left:6px;">
+          ⚙ template
+        </a>
+      </div>
+
+      <!-- SECTION 1 — Welcome (done) -->
+      <section class="section done" id="sec-welcome">
+        <div class="section-head">
+          <div class="section-num">1</div>
+          <div class="section-title">bem-vindo à Frota 162</div>
+          <div class="section-est">~ 10 min</div>
+        </div>
+        <div class="section-body">
+          <p>somos um time 100% remoto que constrói tecnologia para gestão de frotas no Brasil. esse manual é seu — edite ele, deixe rastro do que você aprende.</p>
+
+          <div class="editable">
+            <div class="editable-label">✏️ sua nota · só você edita, time comenta</div>
+            <div class="editable-content" contenteditable="true">primeiro dia! reunião com Rafael 9h. tô animada pra entender o produto e o time. background: 6 anos em backend Java/Kotlin, queria migrar pra Go há tempos — tá rolando aqui.</div>
+          </div>
+
+          <div class="embed">
+            <div class="embed-head">
+              <span class="embed-icon">▶️</span>
+              <span>vídeo de boas-vindas (3:42)</span>
+              <span style="margin-left:auto; color:var(--text-faint);">por @rafaelsouza</span>
+            </div>
+            <div class="embed-video">
+              <div class="play-icon">▶</div>
+              <div class="embed-title">Bem-vindo à Frota 162 — a missão, o time</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4 — Conheça o time (active) -->
+      <section class="section" id="sec-team">
+        <div class="section-head">
+          <div class="section-num">4</div>
+          <div class="section-title">conheça o time</div>
+          <div class="section-est">~ 25 min</div>
+        </div>
+        <div class="section-body">
+          <p>essa semana você marca <strong>3 cafés virtuais de 20min</strong> com pessoas de outros squads. use o mapa do <a href="presence-wireframe.html" style="color:var(--blue);">presence</a> pra ver quem trabalha em quê.</p>
+
+          <!-- Task list -->
+          <div class="task done" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">apresente-se no canal #boas-vindas</div>
+              <div class="task-desc">conte um pouco sobre você, sua stack, e o que você espera dessa jornada.</div>
+            </div>
+            <button class="task-action slack-btn">✓ feito</button>
+          </div>
+
+          <div class="task" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">marque café com seu buddy (Geovane)</div>
+              <div class="task-desc">conversa informal — fala da carreira dele, pergunta o que quiser. 20min.</div>
+            </div>
+            <button class="task-action" onclick="event.stopPropagation();">📅 abrir Calendar</button>
+          </div>
+
+          <div class="task" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">marque café com alguém do frontend</div>
+              <div class="task-desc">veja no presence quem tá disponível. Maria Silva ou Camila são ótimas escolhas.</div>
+            </div>
+            <button class="task-action secondary" onclick="event.stopPropagation();">🗺️ ver mapa</button>
+          </div>
+
+          <div class="task" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">marque café com alguém fora do tech</div>
+              <div class="task-desc">design, produto, qa, devops. amplie o entendimento de quem faz a frota acontecer.</div>
+            </div>
+            <button class="task-action secondary" onclick="event.stopPropagation();">🗺️ ver mapa</button>
+          </div>
+
+          <!-- Comment thread on this section -->
+          <div class="comment-block">
+            <div class="comment-block-label">💬 comentários nesta seção (3)</div>
+            <div class="comment-thread">
+
+              <div class="comment">
+                <div class="avatar-sm purple">RS</div>
+                <div class="comment-body">
+                  <div class="comment-head">
+                    <span class="comment-author">Rafael Souza</span>
+                    <span class="comment-time">há 2 dias</span>
+                  </div>
+                  <div class="comment-text">Aline, sem pressa nesses cafés. Se preferir 15min em vez de 20, tudo bem. <strong>O importante é o contato, não o cumprir checklist.</strong></div>
+                  <div class="comment-actions">
+                    <span>👍 4</span>
+                    <span>responder</span>
+                    <span>resolver</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment">
+                <div class="avatar-sm green">GG</div>
+                <div class="comment-body">
+                  <div class="comment-head">
+                    <span class="comment-author">Geovane Guibes</span>
+                    <span class="comment-time">há 1 dia</span>
+                  </div>
+                  <div class="comment-text">oi @Aline! sou seu buddy. já bloqueei minha agenda quarta 14h. confirma comigo no slack? 🤝</div>
+                  <div class="comment-actions">
+                    <span>👍 2</span>
+                    <span>responder</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment">
+                <div class="avatar-sm orange">AR</div>
+                <div class="comment-body">
+                  <div class="comment-head">
+                    <span class="comment-author">Aline Rocha</span>
+                    <span class="comment-time">há 3h</span>
+                  </div>
+                  <div class="comment-text">confirmado @geovane! tô anotando perguntas, prepara o café ☕</div>
+                  <div class="comment-actions">
+                    <span>responder</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="comment-input">
+              <input placeholder="@menciona ou escreva um comentário..." />
+              <button>enviar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5 — Stack (current focus area) -->
+      <section class="section" id="sec-stack">
+        <div class="section-head">
+          <div class="section-num">5</div>
+          <div class="section-title">a stack</div>
+          <div class="section-est">~ 40 min</div>
+        </div>
+        <div class="section-body">
+          <p>nosso backend principal é <strong>NestJS + TypeORM + PostgreSQL</strong>, com Redis para cache e Kafka para eventos. tudo containerizado, deploy em k8s.</p>
+
+          <div class="embed">
+            <div class="embed-head">
+              <span class="embed-icon">▶️</span>
+              <span>arquitetura em 8 minutos</span>
+              <span style="margin-left:auto; color:var(--text-faint);">por @joaopereira</span>
+            </div>
+            <div class="embed-video">
+              <div class="play-icon">▶</div>
+              <div class="embed-title">Visão geral da arquitetura — Frota 162 Backend</div>
+            </div>
+          </div>
+
+          <div class="editable">
+            <div class="editable-label">✏️ suas anotações enquanto assiste</div>
+            <div class="editable-content" contenteditable="true">
+              <span class="editable-placeholder">vai anotando dúvidas aqui, depois pergunta no café com o tech lead...</span>
+            </div>
+          </div>
+
+          <div class="task" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">clone o repo <code style="background:var(--bg-input);padding:2px 6px;border-radius:3px;font-size:12px;">frota162-kernel</code></div>
+              <div class="task-desc">depois rode <code style="background:var(--bg-input);padding:1px 4px;border-radius:3px;">make dev</code> e veja a API subindo localmente.</div>
+            </div>
+            <button class="task-action gitlab-btn" onclick="event.stopPropagation();">🦊 GitLab</button>
+          </div>
+
+          <!-- Quiz -->
+          <div class="quiz">
+            <div class="quiz-label">🎯 mini-quiz · valide o que aprendeu</div>
+            <div class="quiz-q">qual é o padrão de modelagem do backend?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="quizPick(this, false)">MVC tradicional (controller → service → repository)</div>
+              <div class="quiz-opt" onclick="quizPick(this, true)">DDD com bounded contexts e use cases</div>
+              <div class="quiz-opt" onclick="quizPick(this, false)">Hexagonal puro sem service layer</div>
+              <div class="quiz-opt" onclick="quizPick(this, false)">CQRS com Event Sourcing em todas as agregações</div>
+            </div>
+            <div class="quiz-feedback" id="qz1">
+              ✅ isso! nosso boilerplate usa DDD + use cases — veja exemplos em <code>src/contexts/*/application/</code>. CQRS é usado pontualmente só onde justifica.
+            </div>
+          </div>
+
+          <!-- Embed: form -->
+          <div class="embed">
+            <div class="embed-head">
+              <span class="embed-icon">📝</span>
+              <span>Google Form embed — feedback sobre essa seção</span>
+              <span style="margin-left:auto; color:var(--text-faint);">opcional · anônimo</span>
+            </div>
+            <div style="padding:20px; color:var(--text-dim); font-size:13px;">
+              <strong>como tá sendo a documentação da stack?</strong><br>
+              <span style="font-size:12px; color:var(--text-faint);">[Google Form iframe carregaria aqui em produção]</span>
+              <div style="margin-top:14px; display:flex; gap:6px;">
+                <button style="background:var(--bg-input);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;">muito clara</button>
+                <button style="background:var(--bg-input);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;">ok, faltam exemplos</button>
+                <button style="background:var(--bg-input);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;">confusa</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8 — Seu primeiro MR (preview) -->
+      <section class="section" id="sec-first-mr">
+        <div class="section-head">
+          <div class="section-num">8</div>
+          <div class="section-title">seu primeiro MR</div>
+          <div class="section-est">~ 2h</div>
+        </div>
+        <div class="section-body">
+          <p>o primeiro merge request é simbólico — pode ser pequeno (typo na doc, um lint warning), <strong>o objetivo é exercitar o fluxo completo</strong>: branch → commit → pipeline → review → merge.</p>
+
+          <div class="task" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">leia o guia de contribuição</div>
+              <div class="task-desc">conventional commits, padrão de PR, checklist de review.</div>
+            </div>
+            <button class="task-action secondary" onclick="event.stopPropagation();">📖 abrir guia</button>
+          </div>
+
+          <div class="task" onclick="toggleTask(this)">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">abra seu primeiro MR (qualquer tamanho)</div>
+              <div class="task-desc">pode ser corrigir uma vírgula. o que importa é fechar o loop.</div>
+            </div>
+            <button class="task-action gitlab-btn" onclick="event.stopPropagation();">🦊 abrir MR</button>
+          </div>
+
+          <div class="comment-block">
+            <div class="comment-block-label">💬 dica do buddy</div>
+            <div class="comment">
+              <div class="avatar-sm green">GG</div>
+              <div class="comment-body">
+                <div class="comment-head">
+                  <span class="comment-author">Geovane Guibes</span>
+                  <span class="comment-time">há 4h</span>
+                </div>
+                <div class="comment-text">dica: faz o primeiro MR em <strong>frota162-kernel/docs/</strong> — corrigir um link quebrado, adicionar um exemplo. <strong>review rápido, deploy zero, tu vê o pipeline rodando.</strong> isso quebra o medo do botão "merge". 🚀</div>
+                <div class="comment-actions">
+                  <span>👍 1</span>
+                  <span>responder</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 11 — Buddy -->
+      <section class="section" id="sec-buddy">
+        <div class="section-head">
+          <div class="section-num">11</div>
+          <div class="section-title">seu buddy</div>
+          <div class="section-est">~ contínuo</div>
+        </div>
+        <div class="section-body">
+          <p>todo novo colab recebe um buddy — alguém que <strong>não é seu manager</strong> mas tá disponível pra dúvidas tontas, contexto histórico, e desabafos. seu buddy é:</p>
+
+          <div class="doc-owner" style="background:rgba(74,222,128,0.04); border-color:rgba(74,222,128,0.2); margin-top:14px;">
+            <div class="avatar" style="background: linear-gradient(135deg, #4ade80, #60a5fa);">GG</div>
+            <div class="doc-owner-text">
+              <div class="doc-owner-name">Geovane Guibes · Senior Backend</div>
+              <div class="doc-owner-sub">@geovaneguibes · America/Fortaleza · gosta de DDD, café e perguntas idiotas (não existem perguntas idiotas)</div>
+            </div>
+            <a class="drive-link" href="presence-wireframe.html" style="background:#4a154b; border-color:#6b1f6c; color:#fff;">
+              💬 DM no Slack
+            </a>
+          </div>
+
+          <div class="editable" style="margin-top:18px;">
+            <div class="editable-label">✏️ perguntas pro próximo café com o buddy</div>
+            <div class="editable-content" contenteditable="true">- como funciona o ciclo de release?
+- quem decide quando algo entra como tech-debt?
+- por que vocês escolheram NestJS sobre Spring/Quarkus?</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============ ACTIVITY (RIGHT) ============ -->
+    <aside class="activity">
+      <div class="activity-tab">
+        <span class="active">contribuições</span>
+        <span>histórico</span>
+        <span>menções</span>
+      </div>
+
+      <div class="activity-section-title">top contribuidores deste manual</div>
+      <div class="top-contribs">
+        <div class="top-contrib-row">
+          <div class="avatar-sm orange" style="width:22px;height:22px;font-size:10px;">AR</div>
+          <div class="top-contrib-name">Aline Rocha (você)</div>
+          <div class="top-contrib-count">28 edits</div>
+        </div>
+        <div class="top-contrib-row">
+          <div class="avatar-sm green" style="width:22px;height:22px;font-size:10px;">GG</div>
+          <div class="top-contrib-name">Geovane Guibes</div>
+          <div class="top-contrib-count">14 comments</div>
+        </div>
+        <div class="top-contrib-row">
+          <div class="avatar-sm purple" style="width:22px;height:22px;font-size:10px;">RS</div>
+          <div class="top-contrib-name">Rafael Souza</div>
+          <div class="top-contrib-count">9 comments</div>
+        </div>
+        <div class="top-contrib-row">
+          <div class="avatar-sm" style="width:22px;height:22px;font-size:10px;">MS</div>
+          <div class="top-contrib-name">Maria Silva</div>
+          <div class="top-contrib-count">5 comments</div>
+        </div>
+        <div class="top-contrib-row">
+          <div class="avatar-sm" style="width:22px;height:22px;font-size:10px; background: linear-gradient(135deg, #fbbf24, #fb923c);">JP</div>
+          <div class="top-contrib-name">João Pereira</div>
+          <div class="top-contrib-count">3 comments</div>
+        </div>
+      </div>
+
+      <div class="activity-section-title">atividade recente</div>
+
+      <div class="contrib">
+        <div class="contrib-icon">💬</div>
+        <div class="contrib-body">
+          <div class="contrib-text"><strong>Geovane</strong> comentou em <strong>"seu primeiro MR"</strong></div>
+          <div class="contrib-meta">há 4h</div>
+        </div>
+      </div>
+
+      <div class="contrib">
+        <div class="contrib-icon">✏️</div>
+        <div class="contrib-body">
+          <div class="contrib-text"><strong>Aline</strong> editou anotações em <strong>"a stack"</strong></div>
+          <div class="contrib-meta">há 5h</div>
+        </div>
+      </div>
+
+      <div class="contrib">
+        <div class="contrib-icon">✅</div>
+        <div class="contrib-body">
+          <div class="contrib-text"><strong>Aline</strong> completou <strong>"apresente-se no #boas-vindas"</strong></div>
+          <div class="contrib-meta">ontem</div>
+        </div>
+      </div>
+
+      <div class="contrib">
+        <div class="contrib-icon">💬</div>
+        <div class="contrib-body">
+          <div class="contrib-text"><strong>Rafael</strong> comentou em <strong>"conheça o time"</strong></div>
+          <div class="contrib-meta">há 2 dias</div>
+        </div>
+      </div>
+
+      <div class="contrib">
+        <div class="contrib-icon">📝</div>
+        <div class="contrib-body">
+          <div class="contrib-text"><strong>Maria</strong> adicionou seção <strong>"convenções de frontend"</strong> ao template</div>
+          <div class="contrib-meta">há 3 dias</div>
+        </div>
+      </div>
+
+      <div class="contrib">
+        <div class="contrib-icon">🎉</div>
+        <div class="contrib-body">
+          <div class="contrib-text">manual criado para <strong>Aline Rocha</strong> a partir do template v3.2</div>
+          <div class="contrib-meta">12/06/2026</div>
+        </div>
+      </div>
+
+      <div class="activity-section-title" style="margin-top:18px;">drive sync</div>
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text-dim);">
+        📄 sincronizando com<br>
+        <a href="#" style="color:var(--blue); text-decoration:none;">Docs/Onboarding/Aline-Rocha.gdoc</a><br>
+        <span style="font-size:11px;color:var(--text-faint);">última sync: há 30s ✓</span>
+      </div>
+
+      <div class="activity-section-title" style="margin-top:18px;">acesso</div>
+      <div style="font-size:12px; color:var(--text-dim); line-height:1.6;">
+        🔒 visível para:<br>
+        • Aline (owner)<br>
+        • Rafael (EM)<br>
+        • Geovane (buddy)<br>
+        • #team-kernel (comentar)<br>
+        <a href="#" style="color:var(--blue); text-decoration:none; font-size:11px;">gerenciar acesso →</a>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Floating mention bar -->
+  <div class="floating-actions">
+    <span style="font-size:18px;">⌘K</span>
+    <input placeholder="buscar ou @mencionar pessoa, seção..." />
+    <button>ir</button>
+  </div>
+
+  <div class="wireframe-note">wireframe · onboarding/manual · RFC-0001 §4</div>
+
+  <script>
+    function scrollTo(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.querySelectorAll(".toc-link").forEach(l => l.classList.remove("active"));
+      event.currentTarget.classList.add("active");
+    }
+
+    function toggleTask(el) {
+      el.classList.toggle("done");
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = document.querySelectorAll(".task").length;
+      const done = document.querySelectorAll(".task.done").length;
+      console.log(`progress: ${done}/${total}`);
+      // wireframe: just log; real impl would update progress bar
+    }
+
+    function quizPick(el, correct) {
+      // Reset siblings
+      el.parentElement.querySelectorAll(".quiz-opt").forEach(o => {
+        o.classList.remove("correct", "wrong");
+      });
+      el.classList.add(correct ? "correct" : "wrong");
+      const fb = el.closest(".quiz").querySelector(".quiz-feedback");
+      if (correct) {
+        fb.classList.add("show");
+      } else {
+        fb.classList.remove("show");
+      }
+    }
+
+    // Activity tabs
+    document.querySelectorAll(".activity-tab span").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".activity-tab span").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>

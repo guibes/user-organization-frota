@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>presence settings — frota 162 (wireframe)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1115;
+      --bg-card: #1a1d24;
+      --bg-card-hover: #232730;
+      --bg-input: #0f1115;
+      --border: #2a2f3a;
+      --border-strong: #3a4050;
+      --text: #e4e6eb;
+      --text-dim: #9aa0a6;
+      --text-faint: #6b7280;
+      --accent: #4ade80;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --gray: #6b7280;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 32px;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 880px; margin: 0 auto; }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .back-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { color: var(--text); }
+    h1 {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    /* Panic banner — pause global */
+    .panic {
+      background: linear-gradient(135deg, rgba(248,113,113,0.08), rgba(251,191,36,0.05));
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .panic.active {
+      background: linear-gradient(135deg, rgba(248,113,113,0.18), rgba(248,113,113,0.08));
+      border-color: var(--red);
+    }
+    .panic-left { display: flex; align-items: center; gap: 14px; }
+    .panic-icon {
+      width: 38px; height: 38px;
+      background: rgba(248,113,113,0.15);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .panic-title { font-size: 14px; font-weight: 600; }
+    .panic-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .panic-actions { display: flex; gap: 8px; }
+    .pause-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .pause-btn:hover { background: var(--bg-card-hover); }
+    .pause-btn.danger {
+      background: var(--red);
+      border-color: var(--red);
+      color: #0f1115;
+      font-weight: 500;
+    }
+    .pause-btn.danger:hover { background: #fa9292; }
+
+    /* Section */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 18px;
+    }
+
+    /* Row (toggle item) */
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--border);
+    }
+    .row:first-of-type { border-top: 0; padding-top: 0; }
+    .row-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .row-icon.gitlab   { background: rgba(252,109,38,0.15); }
+    .row-icon.jira     { background: rgba(38,132,255,0.15); }
+    .row-icon.slack    { background: rgba(74,21,75,0.4); }
+    .row-icon.calendar { background: rgba(74,222,128,0.15); }
+    .row-icon.ide      { background: rgba(96,165,250,0.15); }
+    .row-icon.profile  { background: rgba(167,139,250,0.15); }
+
+    .row-body { flex: 1; min-width: 0; }
+    .row-title {
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .row-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .row-meta {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 4px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .status-pill.connected    { background: rgba(74,222,128,0.15); color: var(--green); }
+    .status-pill.disconnected { background: rgba(107,114,128,0.15); color: var(--gray); }
+    .status-pill.stale        { background: rgba(251,191,36,0.15); color: var(--yellow); }
+
+    /* Toggle */
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: var(--border-strong);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 200ms ease;
+      flex-shrink: 0;
+    }
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 200ms ease;
+    }
+    .toggle.on { background: var(--accent); }
+    .toggle.on::after { transform: translateX(18px); }
+    .toggle.disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Connect button */
+    .connect-btn {
+      background: var(--accent);
+      color: #0f1115;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .connect-btn:hover { filter: brightness(1.05); }
+    .reconnect-btn {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Profile editor */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-textarea { resize: vertical; min-height: 64px; }
+    .char-count {
+      font-size: 11px;
+      color: var(--text-faint);
+      text-align: right;
+      margin-top: 4px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .tag-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      border-radius: 6px;
+      min-height: 38px;
+    }
+    .tag-chip {
+      background: rgba(96,165,250,0.15);
+      color: var(--blue);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tag-chip.specialty {
+      background: rgba(74,222,128,0.15);
+      color: var(--green);
+    }
+    .tag-chip .x {
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.6;
+    }
+    .tag-chip .x:hover { opacity: 1; }
+    .tag-input input {
+      flex: 1;
+      min-width: 80px;
+      background: transparent;
+      border: 0;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+
+    /* Working hours grid */
+    .hours-grid {
+      display: grid;
+      grid-template-columns: 60px 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+    }
+    .hours-grid > div { padding: 6px 0; }
+    .hours-grid input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: "SF Mono", Menlo, monospace;
+      width: 100%;
+    }
+    .day-label { color: var(--text-dim); font-weight: 500; }
+    .day-off { color: var(--text-faint); font-style: italic; }
+
+    /* Visibility section */
+    .visibility-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .vis-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--bg-input);
+    }
+    .vis-option.selected {
+      border-color: var(--accent);
+      background: rgba(74,222,128,0.05);
+    }
+    .vis-radio {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border-strong);
+      border-radius: 50%;
+      margin-top: 2px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .vis-option.selected .vis-radio { border-color: var(--accent); }
+    .vis-option.selected .vis-radio::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .vis-title { font-size: 13px; font-weight: 500; }
+    .vis-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+    /* Footer */
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .danger-zone {
+      background: rgba(248,113,113,0.05);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-top: 28px;
+    }
+    .danger-zone .section-title { color: var(--red); }
+    .danger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid rgba(248,113,113,0.1);
+    }
+    .danger-row:first-of-type { border-top: 0; }
+    .danger-btn {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .danger-btn:hover { background: var(--red); color: #0f1115; }
+
+    .save-btn {
+      background: var(--accent);
+      color: #0f1115;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .save-hint { font-size: 12px; color: var(--text-faint); }
+
+    .wireframe-note {
+      position: fixed;
+      bottom: 12px; right: 12px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      color: var(--text-faint);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+  
+    /* === Accessibility: focus-visible ring (added by visual QA pass) === */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    .btn:focus-visible,
+    .topbar-btn:focus-visible,
+    [role="button"]:focus-visible {
+      outline-offset: 3px;
+    }
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+    }
+
+  
+    /* === Polish: scrollbar + typography refinements (visual QA pass) === */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 6px;
+      border: 2px solid var(--bg);
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+    ::selection {
+      background: rgba(74,222,128,0.25);
+      color: var(--text);
+    }
+
+    body {
+      font-feature-settings: "cv11", "ss01", "ss03";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Tabular nums for stats/metrics */
+    .kpi-value, .progress-text, .stat-value, .num,
+    [class*="-num"], [class*="-count"], code {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slightly improved card hover micro-interaction */
+    .card:hover, .kpi:hover {
+      transition: background 200ms ease, transform 200ms ease, border-color 200ms ease;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <a class="back-link" href="presence-wireframe.html">← voltar</a>
+    </div>
+    <h1>settings</h1>
+    <p class="subtitle">presença é opt-in. você controla cada sinal, cada visibilidade. transparência total no que coletamos.</p>
+
+    <!-- PANIC / PAUSE -->
+    <div class="panic" id="panic">
+      <div class="panic-left">
+        <div class="panic-icon">⏸️</div>
+        <div>
+          <div class="panic-title">pausar presence</div>
+          <div class="panic-desc">fica off pra todos. nenhum sinal coletado. nada agregado. nada exposto.</div>
+        </div>
+      </div>
+      <div class="panic-actions">
+        <button class="pause-btn" onclick="pausePresence(60)">1h</button>
+        <button class="pause-btn" onclick="pausePresence(240)">4h</button>
+        <button class="pause-btn" onclick="pausePresence(1440)">24h</button>
+        <button class="pause-btn danger" onclick="pausePresence(0)">indefinido</button>
+      </div>
+    </div>
+
+    <!-- CONNECTIONS / SIGNAL SOURCES -->
+    <div class="section">
+      <div class="section-title">📡 conexões & sinais</div>
+      <div class="section-desc">cada fonte é opt-in. desligue à vontade — sua presença usa o que sobrar (precedência: manual > calendar > ide > git > slack).</div>
+
+      <!-- GitLab -->
+      <div class="row">
+        <div class="row-icon gitlab">🦊</div>
+        <div class="row-body">
+          <div class="row-title">GitLab <span class="status-pill connected">conectado</span></div>
+          <div class="row-desc">commits, MRs e pushes inferem "trabalhando em [projeto]".</div>
+          <div class="row-meta">@geovaneguibes · token expira em 87 dias · último sinal: há 2min</div>
+        </div>
+        <div class="toggle on" onclick="toggle(this)"></div>
+      </div>
+
+      <!-- Jira -->
+      <div class="row">
+        <div class="row-icon jira">📋</div>
+        <div class="row-body">
+          <div class="row-title">Jira <span class="status-pill connected">conectado</span></div>
+          <div class="row-desc">cards "in progress" aparecem como atividade atual.</div>
+          <div class="row-meta">gguibes@frota162 · último sinal: há 12min</div>
+        </div>
+        <div class="toggle on" onclick="toggle(this)"></div>
+      </div>
+
+      <!-- Slack -->
+      <div class="row">
+        <div class="row-icon slack">💬</div>
+        <div class="row-body">
+          <div class="row-title">Slack <span class="status-pill connected">conectado</span></div>
+          <div class="row-desc">expõe presence (active/dnd/away) + custom status emoji + texto. permite DM/call direto da página.</div>
+          <div class="row-meta">U01GG001 · workspace Frota162 · webhook ativo</div>
+        </div>
+        <div class="toggle on" onclick="toggle(this)"></div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="row">
+        <div class="row-icon calendar">📅</div>
+        <div class="row-body">
+          <div class="row-title">Google Calendar <span class="status-pill disconnected">desconectado</span></div>
+          <div class="row-desc">eventos "busy" marcam você como em reunião automaticamente.</div>
+          <div class="row-meta">não conectado</div>
+        </div>
+        <button class="connect-btn">conectar</button>
+      </div>
+
+      <!-- IDE -->
+      <div class="row">
+        <div class="row-icon ide">💻</div>
+        <div class="row-body">
+          <div class="row-title">VSCode extension <span class="status-pill stale">stale</span></div>
+          <div class="row-desc">digitação ativa últimos 5min → status "em foco". opcional — alto sinal de presença real.</div>
+          <div class="row-meta">extensão v0.3 instalada · último heartbeat: há 2h (reconecte?)</div>
+        </div>
+        <button class="reconnect-btn">reconectar</button>
+      </div>
+    </div>
+
+    <!-- VISIBILITY -->
+    <div class="section">
+      <div class="section-title">👁️ o que o time vê</div>
+      <div class="section-desc">controle a granularidade do que aparece pros colegas. self-view sempre completa.</div>
+
+      <div class="visibility-options">
+        <div class="vis-option selected" onclick="selectVis(this)">
+          <div class="vis-radio"></div>
+          <div>
+            <div class="vis-title">contexto rico (recomendado)</div>
+            <div class="vis-desc">status atual + projeto + atividade ("MR !142") + last-seen aproximado ("há 5min")</div>
+          </div>
+        </div>
+        <div class="vis-option" onclick="selectVis(this)">
+          <div class="vis-radio"></div>
+          <div>
+            <div class="vis-title">apenas status</div>
+            <div class="vis-desc">só o pill (disponível / foco / reunião / off). sem projeto, sem atividade, sem timestamps.</div>
+          </div>
+        </div>
+        <div class="vis-option" onclick="selectVis(this)">
+          <div class="vis-radio"></div>
+          <div>
+            <div class="vis-title">invisível</div>
+            <div class="vis-desc">você não aparece no mapa. ainda pode ver os outros. equivalente a "férias".</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; padding-top:18px; border-top:1px solid var(--border);">
+        <div class="row" style="padding:8px 0;">
+          <div class="row-body">
+            <div class="row-title">expor timezone</div>
+            <div class="row-desc">aparece como "🌎 America/Fortaleza" no detalhe.</div>
+          </div>
+          <div class="toggle on" onclick="toggle(this)"></div>
+        </div>
+        <div class="row" style="padding:8px 0;">
+          <div class="row-body">
+            <div class="row-title">expor working hours</div>
+            <div class="row-desc">"9h-12h, 14h-18h BRT" — útil pra time multi-TZ.</div>
+          </div>
+          <div class="toggle on" onclick="toggle(this)"></div>
+        </div>
+        <div class="row" style="padding:8px 0;">
+          <div class="row-body">
+            <div class="row-title">timestamp exato de last-seen</div>
+            <div class="row-desc">desligado → "há ~poucos minutos". ligado → "há 12min". <strong style="color:var(--yellow);">recomendado: desligado</strong>.</div>
+          </div>
+          <div class="toggle" onclick="toggle(this)"></div>
+        </div>
+        <div class="row" style="padding:8px 0;">
+          <div class="row-body">
+            <div class="row-title">aparecer em busca</div>
+            <div class="row-desc">colegas podem te encontrar por nome / stack / projeto. desligado → só por link direto.</div>
+          </div>
+          <div class="toggle on" onclick="toggle(this)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="section">
+      <div class="section-title">👤 seu perfil</div>
+      <div class="section-desc">a parte humana — bio, stack, especialidades. o que ajuda colegas a saberem quem você é.</div>
+
+      <div class="form-group">
+        <label class="form-label">bio (máx 280 chars)</label>
+        <textarea class="form-textarea" maxlength="280" id="bio">Café > tudo. Pergunte sobre DDD e NestJS internals.</textarea>
+        <div class="char-count"><span id="bio-count">49</span>/280</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">role</label>
+          <input class="form-input" value="Senior Backend Engineer" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">timezone</label>
+          <input class="form-input" value="America/Fortaleza" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">stack</label>
+        <div class="tag-input">
+          <span class="tag-chip">NestJS <span class="x">×</span></span>
+          <span class="tag-chip">TypeORM <span class="x">×</span></span>
+          <span class="tag-chip">PostgreSQL <span class="x">×</span></span>
+          <span class="tag-chip">DDD <span class="x">×</span></span>
+          <input placeholder="+ adicionar..." />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">especialidades</label>
+        <div class="tag-input">
+          <span class="tag-chip specialty">backend <span class="x">×</span></span>
+          <span class="tag-chip specialty">arquitetura <span class="x">×</span></span>
+          <input placeholder="+ adicionar..." />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">working hours</label>
+        <div class="hours-grid">
+          <div class="day-label">seg</div>
+          <input value="09:00" />
+          <input value="18:00" />
+          <div class="day-label">ter</div>
+          <input value="09:00" />
+          <input value="18:00" />
+          <div class="day-label">qua</div>
+          <input value="09:00" />
+          <input value="18:00" />
+          <div class="day-label">qui</div>
+          <input value="09:00" />
+          <input value="18:00" />
+          <div class="day-label">sex</div>
+          <input value="09:00" />
+          <input value="17:00" />
+          <div class="day-label">sáb</div>
+          <div class="day-off" style="grid-column: span 2;">off</div>
+          <div class="day-label">dom</div>
+          <div class="day-off" style="grid-column: span 2;">off</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA / RETENTION -->
+    <div class="section">
+      <div class="section-title">🗄️ seus dados</div>
+      <div class="section-desc">transparência total. retention agressiva. nada é exposto além do que está na seção "👁️ o que o time vê".</div>
+
+      <div class="row">
+        <div class="row-icon profile">📊</div>
+        <div class="row-body">
+          <div class="row-title">retention de sinais brutos</div>
+          <div class="row-desc">commits, presença, eventos individuais expiram em <strong>30 dias</strong>. só agregados (último projeto, último ato) sobrevivem.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon profile">📥</div>
+        <div class="row-body">
+          <div class="row-title">exportar meus dados</div>
+          <div class="row-desc">baixa um JSON com tudo que temos de você (perfil + 30d de sinais).</div>
+        </div>
+        <button class="reconnect-btn">exportar JSON</button>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="danger-zone">
+      <div class="section-title">⚠️ zona de risco</div>
+      <div class="section-desc">ações irreversíveis. pense duas vezes.</div>
+
+      <div class="danger-row">
+        <div>
+          <div class="row-title">apagar todo o histórico</div>
+          <div class="row-desc">limpa 30d de sinais. mantém perfil. presence atual zerada.</div>
+        </div>
+        <button class="danger-btn">apagar histórico</button>
+      </div>
+      <div class="danger-row">
+        <div>
+          <div class="row-title">sair do presence</div>
+          <div class="row-desc">remove perfil, desconecta todas as fontes, apaga todos os dados. você some do mapa.</div>
+        </div>
+        <button class="danger-btn">sair de vez</button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-actions">
+      <span class="save-hint">alterações são salvas automaticamente. pause via botão no topo.</span>
+      <button class="save-btn">salvar mudanças</button>
+    </div>
+
+  </div>
+
+  <div class="wireframe-note">wireframe · settings · RFC-0001 §7</div>
+
+  <script>
+    // Toggle
+    function toggle(el) {
+      if (el.classList.contains("disabled")) return;
+      el.classList.toggle("on");
+    }
+
+    // Visibility radio
+    function selectVis(el) {
+      document.querySelectorAll(".vis-option").forEach(v => v.classList.remove("selected"));
+      el.classList.add("selected");
+    }
+
+    // Bio char count
+    const bio = document.getElementById("bio");
+    const bioCount = document.getElementById("bio-count");
+    bio.addEventListener("input", () => {
+      bioCount.textContent = bio.value.length;
+    });
+
+    // Pause presence
+    function pausePresence(minutes) {
+      const panic = document.getElementById("panic");
+      panic.classList.add("active");
+      const label =
+        minutes === 0 ? "indefinidamente" :
+        minutes === 60 ? "por 1 hora" :
+        minutes === 240 ? "por 4 horas" :
+        minutes === 1440 ? "por 24 horas" :
+        `por ${minutes} minutos`;
+      panic.querySelector(".panic-title").textContent = `⏸️ pausado ${label}`;
+      panic.querySelector(".panic-desc").textContent = "você está invisível no mapa. nenhum sinal sendo coletado.";
+      panic.querySelector(".panic-actions").innerHTML = `<button class="pause-btn" onclick="resumePresence()">retomar agora</button>`;
+    }
+    function resumePresence() {
+      const panic = document.getElementById("panic");
+      panic.classList.remove("active");
+      panic.querySelector(".panic-title").textContent = "pausar presence";
+      panic.querySelector(".panic-desc").textContent = "fica off pra todos. nenhum sinal coletado. nada agregado. nada exposto.";
+      panic.querySelector(".panic-actions").innerHTML = `
+        <button class="pause-btn" onclick="pausePresence(60)">1h</button>
+        <button class="pause-btn" onclick="pausePresence(240)">4h</button>
+        <button class="pause-btn" onclick="pausePresence(1440)">24h</button>
+        <button class="pause-btn danger" onclick="pausePresence(0)">indefinido</button>
+      `;
+    }
+
+    // Tag chip remove (visual only)
+    document.querySelectorAll(".tag-chip .x").forEach(x => {
+      x.addEventListener("click", (e) => {
+        e.target.closest(".tag-chip").remove();
+      });
+    });
+  </script>
+</body>
+</html>

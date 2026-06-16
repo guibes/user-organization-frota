@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>people dashboard — primeiro mês (wireframe)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1115;
+      --bg-card: #1a1d24;
+      --bg-card-hover: #232730;
+      --bg-input: #0f1115;
+      --border: #2a2f3a;
+      --border-strong: #3a4050;
+      --text: #e4e6eb;
+      --text-dim: #9aa0a6;
+      --text-faint: #6b7280;
+      --accent: #4ade80;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --gray: #6b7280;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Topbar */
+    .topbar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #0f1115; font-size: 12px;
+    }
+    .topbar-title { font-size: 14px; font-weight: 600; }
+    .topbar-sub { font-size: 11px; color: var(--text-faint); }
+    .breadcrumb { font-size: 12px; color: var(--text-faint); margin-left: 16px; }
+    .breadcrumb a { color: var(--text-dim); text-decoration: none; }
+    .breadcrumb strong { color: var(--text); }
+    .topbar-spacer { flex: 1; }
+    .role-badge {
+      background: rgba(167,139,250,0.15);
+      color: var(--purple);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .topbar-btn {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar-btn.primary {
+      background: var(--accent);
+      color: #0f1115;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 32px 60px;
+    }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .page-sub { font-size: 14px; color: var(--text-dim); margin-top: 2px; }
+
+    /* First-run hero banner */
+    .first-run {
+      background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(96,165,250,0.06));
+      border: 1px solid rgba(74,222,128,0.25);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .first-run::before {
+      content: "👥";
+      position: absolute;
+      right: 0; top: -20px;
+      font-size: 140px;
+      opacity: 0.05;
+      transform: rotate(-12deg);
+    }
+    .first-run-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .first-run-text {
+      font-size: 14px;
+      color: var(--text-dim);
+      max-width: 620px;
+      margin-bottom: 20px;
+    }
+    .first-run-cta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .first-run-btn {
+      background: var(--accent);
+      color: #0f1115;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .first-run-btn:hover { filter: brightness(1.05); }
+    .first-run-btn.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+    }
+    .first-run-btn.secondary:hover { background: var(--bg-card-hover); }
+
+    /* Setup checklist (right side of first-run) */
+    .first-run-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .setup-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .setup-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .setup-row {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      align-items: center;
+    }
+    .setup-row:first-of-type { border-top: 0; padding-top: 0; }
+    .setup-check {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 3px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .setup-check.done {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .setup-check.done::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #0f1115;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .setup-name { flex: 1; color: var(--text-dim); }
+    .setup-row.done .setup-name { text-decoration: line-through; opacity: 0.6; }
+    .setup-progress {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* KPI cards (empty/zero state) */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .kpi {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      position: relative;
+    }
+    .kpi.empty {
+      opacity: 0.7;
+    }
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-faint);
+    }
+    .kpi-value.has-data { color: var(--text); }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+    .kpi-na {
+      color: var(--text-faint);
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    /* Onboarding insights card (empty) */
+    .insights-empty {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .insights-empty-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+    .insights-empty-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .insights-empty-text { font-size: 13px; color: var(--text-dim); max-width: 500px; margin: 0 auto; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .tab {
+      padding: 10px 16px;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 13px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+    .tab.disabled { opacity: 0.5; cursor: default; }
+    .tab-count {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+    .tab.active .tab-count {
+      background: rgba(74,222,128,0.15);
+      border-color: rgba(74,222,128,0.3);
+      color: var(--accent);
+    }
+
+    /* Empty table state */
+    .empty-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 60px 40px;
+      text-align: center;
+    }
+    .empty-illustration {
+      font-size: 64px;
+      opacity: 0.3;
+      margin-bottom: 18px;
+      line-height: 1;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .empty-text {
+      font-size: 14px;
+      color: var(--text-dim);
+      max-width: 460px;
+      margin: 0 auto 22px;
+    }
+    .empty-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    /* Sample preview banner */
+    .sample-banner {
+      background: rgba(96,165,250,0.05);
+      border: 1px solid rgba(96,165,250,0.2);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .sample-banner-icon { font-size: 18px; }
+    .sample-banner strong { color: var(--text); }
+    .sample-banner a { color: var(--blue); text-decoration: none; margin-left: auto; }
+
+    /* Tour overlay */
+    .tour-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,17,21,0.85);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .tour-overlay.open { display: flex; }
+    .tour-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      width: 480px;
+      max-width: 92vw;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .tour-emoji { font-size: 48px; margin-bottom: 14px; }
+    .tour-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .tour-text { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+    .tour-steps {
+      display: flex; justify-content: center; gap: 6px; margin-bottom: 18px;
+    }
+    .tour-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border-strong);
+    }
+    .tour-dot.active { background: var(--accent); width: 22px; border-radius: 4px; }
+    .tour-actions {
+      display: flex; justify-content: space-between; gap: 10px;
+    }
+    .tour-skip {
+      background: transparent;
+      border: none;
+      color: var(--text-faint);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .tour-next {
+      background: var(--accent);
+      color: #0f1115;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .wireframe-note {
+      position: fixed;
+      bottom: 12px; right: 12px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      color: var(--text-faint);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+  
+    /* === Accessibility: focus-visible ring (added by visual QA pass) === */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    .btn:focus-visible,
+    .topbar-btn:focus-visible,
+    [role="button"]:focus-visible {
+      outline-offset: 3px;
+    }
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+    }
+
+  
+    /* === Polish: scrollbar + typography refinements (visual QA pass) === */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 6px;
+      border: 2px solid var(--bg);
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+    ::selection {
+      background: rgba(74,222,128,0.25);
+      color: var(--text);
+    }
+
+    body {
+      font-feature-settings: "cv11", "ss01", "ss03";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Tabular nums for stats/metrics */
+    .kpi-value, .progress-text, .stat-value, .num,
+    [class*="-num"], [class*="-count"], code {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slightly improved card hover micro-interaction */
+    .card:hover, .kpi:hover {
+      transition: background 200ms ease, transform 200ms ease, border-color 200ms ease;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">P</div>
+      <div>
+        <div class="topbar-title">presence · people ops</div>
+        <div class="topbar-sub">dashboard</div>
+      </div>
+    </div>
+    <div class="breadcrumb">
+      <a href="presence-wireframe.html">presence</a> / admin / <strong>people dashboard</strong>
+    </div>
+    <div class="topbar-spacer"></div>
+    <span class="role-badge">👤 People Ops</span>
+    <a class="topbar-btn" href="onboarding-template-editor.html">⚙ templates</a>
+    <a class="topbar-btn primary" onclick="openTour()" style="cursor:pointer;">🚀 começar</a>
+  </div>
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <div>
+        <h1>people dashboard</h1>
+        <div class="page-sub">primeiro mês operando · ainda construindo histórico</div>
+      </div>
+      <div style="font-size:12px; color:var(--text-faint);">
+        plataforma instalada há 6 dias · sem onboardings ativos
+      </div>
+    </div>
+
+    <!-- FIRST-RUN HERO -->
+    <div class="first-run">
+      <div class="first-run-grid">
+
+        <div>
+          <div class="first-run-title">bem-vinda ao people dashboard 👋</div>
+          <div class="first-run-text">
+            esse é o painel que você usa pra <strong>acompanhar o onboarding de novos colabs</strong> em tempo real.
+            por enquanto está vazio porque ninguém entrou ainda na plataforma — mas você pode preparar tudo agora pra
+            quando o primeiro chegar.
+          </div>
+          <div class="first-run-cta">
+            <a class="first-run-btn" onclick="openTour()" style="cursor:pointer;">🚀 tour guiado (40s)</a>
+            <a class="first-run-btn secondary" href="onboarding-template-editor.html">📋 revisar template padrão</a>
+          </div>
+        </div>
+
+        <div class="setup-card">
+          <div class="setup-title">setup do dashboard</div>
+          <div class="setup-row done">
+            <div class="setup-check done"></div>
+            <div class="setup-name">conectar Google Workspace</div>
+          </div>
+          <div class="setup-row done">
+            <div class="setup-check done"></div>
+            <div class="setup-name">conectar Slack workspace</div>
+          </div>
+          <div class="setup-row done">
+            <div class="setup-check done"></div>
+            <div class="setup-name">conectar GitLab</div>
+          </div>
+          <div class="setup-row">
+            <div class="setup-check"></div>
+            <div class="setup-name">revisar template padrão</div>
+          </div>
+          <div class="setup-row">
+            <div class="setup-check"></div>
+            <div class="setup-name">definir rotina semanal de 1:1</div>
+          </div>
+          <div class="setup-row">
+            <div class="setup-check"></div>
+            <div class="setup-name">onboarding piloto (você mesmo)</div>
+          </div>
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">progresso</span>
+            <span class="setup-progress">3/6 · 50%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- KPIs (zero state) -->
+    <div class="kpi-grid">
+      <div class="kpi empty">
+        <div class="kpi-label">colabs em onboarding</div>
+        <div class="kpi-value">0</div>
+        <div class="kpi-sub">aguardando primeiro convite</div>
+      </div>
+      <div class="kpi empty">
+        <div class="kpi-label">% conclusão (30d)</div>
+        <div class="kpi-value">—</div>
+        <div class="kpi-na">precisa de ≥3 colabs formados</div>
+      </div>
+      <div class="kpi empty">
+        <div class="kpi-label">tempo médio</div>
+        <div class="kpi-value">—</div>
+        <div class="kpi-na">disponível após 1ª formatura</div>
+      </div>
+      <div class="kpi empty">
+        <div class="kpi-label">NPS onboarding</div>
+        <div class="kpi-value">—</div>
+        <div class="kpi-na">precisa de ≥5 respostas</div>
+      </div>
+      <div class="kpi empty">
+        <div class="kpi-label">requer atenção</div>
+        <div class="kpi-value">0</div>
+        <div class="kpi-sub">nada para revisar</div>
+      </div>
+    </div>
+
+    <!-- Insights teaser (empty) -->
+    <div class="insights-empty">
+      <div class="insights-empty-icon">📊</div>
+      <div class="insights-empty-title">insights aparecem aqui assim que houver dados</div>
+      <div class="insights-empty-text">
+        depois do primeiro onboarding completo, você verá alertas inteligentes do tipo
+        "seção X demora mais do que estimado", "buddy Y é o mais ativo", "role Z tem
+        maior dropout". por enquanto, comece convidando alguém.
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active">
+        <span>em onboarding</span>
+        <span class="tab-count">0</span>
+      </div>
+      <div class="tab disabled">
+        <span>formados (90d)</span>
+        <span class="tab-count">0</span>
+      </div>
+      <div class="tab disabled">
+        <span>pausados</span>
+        <span class="tab-count">0</span>
+      </div>
+      <div class="tab disabled">
+        <span>desligados</span>
+        <span class="tab-count">0</span>
+      </div>
+    </div>
+
+    <!-- EMPTY TABLE -->
+    <div class="empty-table">
+      <div class="empty-illustration">🪑</div>
+      <div class="empty-title">nenhum onboarding em andamento</div>
+      <div class="empty-text">
+        assim que você convidar a primeira pessoa, o manual dela é criado a partir do template e
+        ela aparece aqui com progresso em tempo real, alertas, e drill-down detalhado.
+      </div>
+      <div class="empty-actions">
+        <a class="first-run-btn" onclick="alert('em produção: abriria modal de convite')" style="cursor:pointer;">+ convidar primeiro colab</a>
+        <a class="first-run-btn secondary" href="onboarding-empty.html">👁️ preview do manual</a>
+      </div>
+    </div>
+
+    <!-- Sample preview banner -->
+    <div class="sample-banner">
+      <div class="sample-banner-icon">💡</div>
+      <div>
+        <strong>quer ver como fica com dados?</strong> abra a versão com mock data pra entender o fluxo completo.
+      </div>
+      <a href="people-dashboard.html">ver dashboard com dados →</a>
+    </div>
+
+  </div>
+
+  <!-- TOUR -->
+  <div class="tour-overlay" id="tour">
+    <div class="tour-card">
+      <div class="tour-emoji" id="tour-emoji">👋</div>
+      <div class="tour-title" id="tour-title">bem-vinda ao people dashboard!</div>
+      <div class="tour-text" id="tour-text">
+        em 40 segundos te mostro o que você consegue fazer aqui. nada de assistir vídeo de 1h.
+      </div>
+      <div class="tour-steps">
+        <div class="tour-dot active" id="d1"></div>
+        <div class="tour-dot" id="d2"></div>
+        <div class="tour-dot" id="d3"></div>
+        <div class="tour-dot" id="d4"></div>
+      </div>
+      <div class="tour-actions">
+        <button class="tour-skip" onclick="closeTour()">pular tour</button>
+        <button class="tour-next" id="tour-next" onclick="nextTour()">vamos lá →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wireframe-note">wireframe · people dashboard · empty state · RFC-0001</div>
+
+  <script>
+    const tourSteps = [
+      { emoji: "👋", title: "bem-vinda ao people dashboard!",
+        text: "em 40 segundos te mostro o que você consegue fazer aqui. nada de vídeo de 1h." },
+      { emoji: "📊", title: "KPIs no topo, alerts logo abaixo",
+        text: "métricas e alerts inteligentes (\"colab travou\", \"seção demora mais que esperado\") aparecem assim que houver dados." },
+      { emoji: "👥", title: "tabela + drill-down",
+        text: "cada linha é um colab em onboarding. clica → painel direito mostra progresso seção a seção, rede de apoio, e ações (DM Slack, marcar 1:1)." },
+      { emoji: "🚀", title: "pronto pra começar?",
+        text: "primeiro passo: revisar o template padrão. depois é só convidar o primeiro colab que tudo passa a funcionar." }
+    ];
+    let tourIdx = 0;
+
+    function openTour() {
+      tourIdx = 0;
+      renderTour();
+      document.getElementById("tour").classList.add("open");
+    }
+    function nextTour() {
+      tourIdx++;
+      if (tourIdx >= tourSteps.length) {
+        closeTour();
+        return;
+      }
+      renderTour();
+    }
+    function renderTour() {
+      const s = tourSteps[tourIdx];
+      document.getElementById("tour-emoji").textContent = s.emoji;
+      document.getElementById("tour-title").textContent = s.title;
+      document.getElementById("tour-text").textContent  = s.text;
+      ["d1","d2","d3","d4"].forEach((id, i) => {
+        document.getElementById(id).classList.toggle("active", i === tourIdx);
+      });
+      document.getElementById("tour-next").textContent =
+        tourIdx === tourSteps.length - 1 ? "ir pra templates ✓" : "próximo →";
+    }
+    function closeTour() {
+      document.getElementById("tour").classList.remove("open");
+      if (tourIdx === tourSteps.length - 1) {
+        window.location.href = "onboarding-template-editor.html";
+      }
+    }
+  </script>
+</body>
+</html>

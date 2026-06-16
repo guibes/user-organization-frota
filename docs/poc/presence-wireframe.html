@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>presence — frota 162 (wireframe)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1115;
+      --bg-card: #1a1d24;
+      --bg-card-hover: #232730;
+      --border: #2a2f3a;
+      --text: #e4e6eb;
+      --text-dim: #9aa0a6;
+      --text-faint: #6b7280;
+      --accent: #4ade80;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --gray: #6b7280;
+      --blue: #60a5fa;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 32px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .brand h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand .tag {
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .search {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      width: 240px;
+    }
+    .search::placeholder { color: var(--text-faint); }
+    .btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--bg-card-hover); }
+    .btn-primary {
+      background: var(--accent);
+      color: #0f1115;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .filter-chip.active {
+      background: var(--accent);
+      color: #0f1115;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 40px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+    .section-header .count {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-1px);
+    }
+    .card.off { opacity: 0.55; }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4ade80, #60a5fa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 15px;
+      color: #0f1115;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .status-dot {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+    }
+    .status-dot.available { background: var(--green); }
+    .status-dot.focus     { background: var(--red); }
+    .status-dot.meeting   { background: var(--yellow); }
+    .status-dot.off       { background: var(--gray); }
+
+    .card-identity {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-name {
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-handle {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .card-status {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .status-pill.available { background: rgba(74,222,128,0.15); color: var(--green); }
+    .status-pill.focus     { background: rgba(248,113,113,0.15); color: var(--red); }
+    .status-pill.meeting   { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .status-pill.off       { background: rgba(107,114,128,0.15); color: var(--gray); }
+
+    .card-activity {
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-project {
+      font-size: 11px;
+      color: var(--text-faint);
+      font-family: "SF Mono", Menlo, monospace;
+    }
+    .card-meta {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .icon { width: 12px; height: 12px; display: inline-block; vertical-align: -1px; }
+
+    /* Detail panel (modal-like) */
+    .detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+    }
+    .detail-overlay.open { display: flex; }
+    .detail {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 480px;
+      max-width: 92vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .detail-head {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail .avatar { width: 56px; height: 56px; font-size: 20px; }
+    .detail-name { font-size: 18px; font-weight: 600; }
+    .detail-handle { font-size: 13px; color: var(--text-dim); }
+    .detail-tz { font-size: 12px; color: var(--text-faint); margin-top: 4px; }
+
+    .detail-block { margin-bottom: 18px; }
+    .detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .detail-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .detail-mono { font-family: "SF Mono", Menlo, monospace; font-size: 12px; }
+
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      background: rgba(96,165,250,0.12);
+      color: var(--blue);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .tag.specialty { background: rgba(74,222,128,0.12); color: var(--green); }
+
+    /* Slack badge on card */
+    .slack-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .slack-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gray);
+    }
+    .slack-dot.active   { background: #2bac76; }
+    .slack-dot.dnd      { background: #f87171; }
+    .slack-dot.away     { background: #6b7280; }
+
+    /* Slack call buttons in detail */
+    .slack-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .slack-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #4a154b;
+      color: #fff;
+      border: 1px solid #6b1f6c;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+    .slack-btn:hover { background: #611f64; }
+    .slack-btn.secondary {
+      background: var(--bg-card-hover);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .slack-btn.secondary:hover { background: #2d323d; }
+    .slack-btn.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .slack-status-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text);
+      margin-top: 4px;
+    }
+    .slack-emoji { font-size: 16px; }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Footer note */
+    .wireframe-note {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      color: var(--text-faint);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: "SF Mono", Menlo, monospace;
+    }
+  
+    /* === Accessibility: focus-visible ring (added by visual QA pass) === */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    .btn:focus-visible,
+    .topbar-btn:focus-visible,
+    [role="button"]:focus-visible {
+      outline-offset: 3px;
+    }
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+    }
+
+  
+    /* === Polish: scrollbar + typography refinements (visual QA pass) === */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 6px;
+      border: 2px solid var(--bg);
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+    ::selection {
+      background: rgba(74,222,128,0.25);
+      color: var(--text);
+    }
+
+    body {
+      font-feature-settings: "cv11", "ss01", "ss03";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Tabular nums for stats/metrics */
+    .kpi-value, .progress-text, .stat-value, .num,
+    [class*="-num"], [class*="-count"], code {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slightly improved card hover micro-interaction */
+    .card:hover, .kpi:hover {
+      transition: background 200ms ease, transform 200ms ease, border-color 200ms ease;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="brand">
+      <h1>presence</h1>
+      <span class="tag">frota 162 · who's working on what, right now</span>
+    </div>
+    <div class="header-actions">
+      <input class="search" placeholder="🔍 buscar pessoa, projeto, stack..." />
+      <a class="btn" href="onboarding-manual.html" style="text-decoration:none;">📖 onboarding</a>
+      <a class="btn" href="people-dashboard.html" style="text-decoration:none;">👥 people ops</a>
+      <a class="btn" href="presence-settings.html" style="text-decoration:none;">⚙ settings</a>
+      <button class="btn btn-primary">🟢 disponível</button>
+    </div>
+  </div>
+
+  <div class="filters">
+    <span class="filter-chip active">todos</span>
+    <span class="filter-chip">disponível</span>
+    <span class="filter-chip">em foco</span>
+    <span class="filter-chip">reunião</span>
+    <span class="filter-chip">off</span>
+    <span class="filter-chip">· backend</span>
+    <span class="filter-chip">· frontend</span>
+    <span class="filter-chip">· qa</span>
+    <span class="filter-chip">· devops</span>
+  </div>
+
+  <!-- WORKING NOW -->
+  <div class="section">
+    <div class="section-header">
+      <span>🟢 trabalhando agora</span>
+      <span class="count">5</span>
+    </div>
+    <div class="grid" id="grid-working"></div>
+  </div>
+
+  <!-- IN MEETING -->
+  <div class="section">
+    <div class="section-header">
+      <span>🟡 em reunião</span>
+      <span class="count">2</span>
+    </div>
+    <div class="grid" id="grid-meeting"></div>
+  </div>
+
+  <!-- OFF -->
+  <div class="section">
+    <div class="section-header">
+      <span>⚪ fora / off</span>
+      <span class="count">3</span>
+    </div>
+    <div class="grid" id="grid-off"></div>
+  </div>
+
+  <!-- Detail modal -->
+  <div class="detail-overlay" id="overlay">
+    <div class="detail" id="detail">
+      <button class="close-btn" onclick="closeDetail()">×</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <div class="wireframe-note">wireframe · mock data · RFC-0001</div>
+
+  <script>
+    // ============ MOCK DATA ============
+    const PEOPLE = [
+      // WORKING
+      {
+        id: 1, name: "Geovane Guibes", handle: "@geovaneguibes",
+        initials: "GG", status: "available", role: "Senior Backend",
+        activity: "MR !142 · presence map", project: "user-organization-frota",
+        lastActive: "há 2min", source: "gitlab",
+        bio: "Café > tudo. Pergunte sobre DDD e NestJS internals.",
+        tz: "America/Fortaleza", hours: "9h-12h, 14h-18h BRT",
+        stack: ["NestJS", "TypeORM", "PostgreSQL", "DDD"],
+        specialties: ["backend", "arquitetura"],
+        projects: ["user-organization-frota", "dashboard-devs-tool"],
+        slack: { id: "U01GG001", presence: "active", emoji: "☕", text: "codando — pings ok" }
+      },
+      {
+        id: 2, name: "Maria Silva", handle: "@mariasilva",
+        initials: "MS", status: "available", role: "Frontend Engineer",
+        activity: "JIRA-301 · refactor sidebar", project: "frota162-backoffice",
+        lastActive: "há 5min", source: "jira",
+        bio: "React + TS. Acessibilidade > tudo.",
+        tz: "America/Sao_Paulo", hours: "10h-19h BRT",
+        stack: ["React", "TypeScript", "Tailwind", "a11y"],
+        specialties: ["frontend", "design-systems"],
+        projects: ["frota162-backoffice", "gestor-frota"],
+        slack: { id: "U02MS002", presence: "active", emoji: "🎧", text: "headphones on" }
+      },
+      {
+        id: 3, name: "João Pereira", handle: "@joaopereira",
+        initials: "JP", status: "focus", role: "Tech Lead Backend",
+        activity: "🔴 deep work — não perturbe", project: "frota162-kernel",
+        lastActive: "há 18min", source: "manual",
+        bio: "Refatorando o kernel. Pings → DM async, respondo às 14h.",
+        tz: "America/Fortaleza", hours: "8h-17h BRT (foco 9-12h)",
+        stack: ["Go", "PostgreSQL", "Kafka", "k8s"],
+        specialties: ["backend", "performance", "infra"],
+        projects: ["frota162-kernel", "telemetria-veicular"],
+        slack: { id: "U03JP003", presence: "dnd", emoji: "🧠", text: "deep focus — respondo 14h" }
+      },
+      {
+        id: 4, name: "Ana Costa", handle: "@anacosta",
+        initials: "AC", status: "focus", role: "QA Engineer",
+        activity: "🔴 testes E2E — gravando", project: "frota162-backoffice",
+        lastActive: "há 1min", source: "ide",
+        bio: "Cypress + Playwright. Encontro bug onde você nem olhou.",
+        tz: "America/Recife", hours: "9h-18h BRT",
+        stack: ["Playwright", "Cypress", "TypeScript"],
+        specialties: ["qa", "automação"],
+        projects: ["frota162-backoffice", "gestor-frota"],
+        slack: { id: "U04AC004", presence: "dnd", emoji: "🎬", text: "gravando E2E" }
+      },
+      {
+        id: 5, name: "Lucas Mendes", handle: "@lucasmendes",
+        initials: "LM", status: "available", role: "DevOps",
+        activity: "deploy staging · k8s rollout", project: "infra-frota",
+        lastActive: "agora", source: "gitlab",
+        bio: "Pipelines, observabilidade, custo cloud. Sim, eu mexi no Helm chart.",
+        tz: "America/Fortaleza", hours: "8h-17h BRT",
+        stack: ["k8s", "Terraform", "Grafana", "ArgoCD"],
+        specialties: ["devops", "sre"],
+        projects: ["infra-frota", "frota162-kernel"],
+        slack: { id: "U05LM005", presence: "active", emoji: "🚀", text: "deploy em andamento" }
+      },
+
+      // MEETING
+      {
+        id: 6, name: "Rafael Souza", handle: "@rafaelsouza",
+        initials: "RS", status: "meeting", role: "Engineering Manager",
+        activity: "🟡 1:1 com Maria · até 15h", project: "—",
+        lastActive: "há 30min", source: "calendar",
+        bio: "1:1s, planning, unblockers. Calendar é minha vida.",
+        tz: "America/Fortaleza", hours: "9h-18h BRT",
+        stack: ["gestão", "OKR", "Notion"],
+        specialties: ["liderança", "produto"],
+        projects: ["gestor-frota"],
+        slack: { id: "U06RS006", presence: "active", emoji: "📞", text: "em call até 15h" }
+      },
+      {
+        id: 7, name: "Camila Reis", handle: "@camilareis",
+        initials: "CR", status: "meeting", role: "Product Designer",
+        activity: "🟡 review de UI · até 15h30", project: "frota162-backoffice",
+        lastActive: "há 12min", source: "calendar",
+        bio: "Figma, design system, pesquisa com usuário.",
+        tz: "America/Sao_Paulo", hours: "10h-19h BRT",
+        stack: ["Figma", "design-tokens", "research"],
+        specialties: ["design", "ux"],
+        projects: ["frota162-backoffice"],
+        slack: { id: "U07CR007", presence: "active", emoji: "🎨", text: "design review" }
+      },
+
+      // OFF
+      {
+        id: 8, name: "Bruno Lima", handle: "@brunolima",
+        initials: "BL", status: "off", role: "Backend Engineer",
+        activity: "off · de férias até 20/06", project: "—",
+        lastActive: "há 3 dias", source: "manual",
+        bio: "Backend Java/Kotlin. Surf > código quando dá.",
+        tz: "America/Fortaleza", hours: "9h-18h BRT",
+        stack: ["Kotlin", "Spring", "PostgreSQL"],
+        specialties: ["backend"],
+        projects: ["frota162-kernel"],
+        slack: { id: "U08BL008", presence: "away", emoji: "🏖️", text: "férias até 20/06" }
+      },
+      {
+        id: 9, name: "Patrícia Alves", handle: "@patriciaalves",
+        initials: "PA", status: "off", role: "Data Engineer",
+        activity: "off · fora do horário",  project: "—",
+        lastActive: "há 14h", source: "—",
+        bio: "ETL, dbt, warehouse. Pergunte sobre métricas.",
+        tz: "Europe/Lisbon", hours: "9h-18h WET (BRT-4)",
+        stack: ["dbt", "Airflow", "BigQuery", "SQL"],
+        specialties: ["data", "analytics"],
+        projects: ["dados-frota"],
+        slack: { id: "U09PA009", presence: "away", emoji: "🌙", text: "fora do horário (WET)" }
+      },
+      {
+        id: 10, name: "Diego Ferreira", handle: "@diegoferreira",
+        initials: "DF", status: "off", role: "Mobile Engineer",
+        activity: "off · pausou presence por 4h", project: "—",
+        lastActive: "há 5h", source: "manual",
+        bio: "Flutter + React Native. Café é não-negociável.",
+        tz: "America/Sao_Paulo", hours: "10h-19h BRT",
+        stack: ["Flutter", "Dart", "React Native"],
+        specialties: ["mobile"],
+        projects: ["app-motorista"],
+        slack: { id: "U10DF010", presence: "away", emoji: "⏸️", text: "presence pausado 4h" }
+      }
+    ];
+
+    // Slack workspace ID (mock — em produção vem de config/env)
+    const SLACK_TEAM_ID = "T0FROTA162";
+
+    const SLACK_PRESENCE_LABEL = {
+      active: "ativo no Slack",
+      dnd:    "não perturbe",
+      away:   "ausente"
+    };
+
+    // Deeplink helpers
+    function slackDmUrl(userId) {
+      // slack:// abre app desktop; fallback web em data-href
+      return `slack://user?team=${SLACK_TEAM_ID}&id=${userId}`;
+    }
+    function slackCallUrl(userId) {
+      return `slack://call?team=${SLACK_TEAM_ID}&id=${userId}`;
+    }
+    function slackWebFallback(userId) {
+      return `https://app.slack.com/client/${SLACK_TEAM_ID}/${userId}`;
+    }
+
+    const STATUS_LABEL = {
+      available: "disponível",
+      focus: "em foco",
+      meeting: "em reunião",
+      off: "off"
+    };
+
+    // ============ RENDER ============
+    function renderCard(p) {
+      const offClass = p.status === "off" ? "off" : "";
+      const slack = p.slack || {};
+      const slackPresence = slack.presence || "away";
+      const slackUserId = slack.id || "";
+      const slackEmoji = slack.emoji || "";
+      const slackText = slack.text || "—";
+      const slackDisabled = !slackUserId || slackPresence === "away" ? "disabled" : "";
+
+      return `
+        <div class="card ${offClass}" onclick="openDetail(${p.id})">
+          <div class="card-head">
+            <div class="avatar">
+              ${p.initials}
+              <span class="status-dot ${p.status}"></span>
+            </div>
+            <div class="card-identity">
+              <div class="card-name">${p.name}</div>
+              <div class="card-handle">${p.handle} · ${p.role}</div>
+            </div>
+          </div>
+          <div class="card-status">
+            <span class="status-pill ${p.status}">${STATUS_LABEL[p.status]}</span>
+            <span class="slack-badge" title="${SLACK_PRESENCE_LABEL[slackPresence]}">
+              <span class="slack-dot ${slackPresence}"></span>
+              <span>${slackEmoji} ${slackText}</span>
+            </span>
+          </div>
+          <div class="card-activity">${p.activity}</div>
+          <div class="card-project">${p.project}</div>
+          <div class="card-meta">
+            <span>📡 ${p.source}</span>
+            <span>${p.lastActive}</span>
+          </div>
+          <div class="slack-actions" onclick="event.stopPropagation();">
+            <a class="slack-btn ${slackDisabled}"
+               href="${slackDmUrl(slackUserId)}"
+               data-fallback="${slackWebFallback(slackUserId)}"
+               onclick="trackSlack(event, 'dm', ${p.id})">
+              💬 DM
+            </a>
+            <a class="slack-btn secondary ${slackDisabled}"
+               href="${slackCallUrl(slackUserId)}"
+               data-fallback="${slackWebFallback(slackUserId)}"
+               onclick="trackSlack(event, 'call', ${p.id})">
+              📞 chamar
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGrid(containerId, statusFilter) {
+      const container = document.getElementById(containerId);
+      const filtered = PEOPLE.filter(p => p.status === statusFilter || (statusFilter === "working" && (p.status === "available" || p.status === "focus")));
+      container.innerHTML = filtered.map(renderCard).join("");
+    }
+
+    renderGrid("grid-working", "working");
+    renderGrid("grid-meeting", "meeting");
+    renderGrid("grid-off", "off");
+
+    // ============ DETAIL ============
+    function openDetail(id) {
+      const p = PEOPLE.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById("detail-content").innerHTML = `
+        <div class="detail-head">
+          <div class="avatar">
+            ${p.initials}
+            <span class="status-dot ${p.status}"></span>
+          </div>
+          <div>
+            <div class="detail-name">${p.name}</div>
+            <div class="detail-handle">${p.handle} · ${p.role}</div>
+            <div class="detail-tz">🌎 ${p.tz} · ${p.hours}</div>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label">📌 agora</div>
+          <div class="detail-value">
+            <span class="status-pill ${p.status}">${STATUS_LABEL[p.status]}</span>
+          </div>
+          <div class="detail-value" style="margin-top:8px;">${p.activity}</div>
+          <div class="detail-value detail-mono" style="color:var(--text-faint);margin-top:4px;">${p.project} · via ${p.source} · ${p.lastActive}</div>
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label">💬 slack</div>
+          <div class="slack-status-line">
+            <span class="slack-dot ${p.slack.presence}"></span>
+            <span>${SLACK_PRESENCE_LABEL[p.slack.presence]}</span>
+          </div>
+          <div class="slack-status-line">
+            <span class="slack-emoji">${p.slack.emoji}</span>
+            <span>${p.slack.text}</span>
+          </div>
+          <div class="slack-actions">
+            <a class="slack-btn ${p.slack.presence === 'away' ? 'disabled' : ''}"
+               href="${slackDmUrl(p.slack.id)}"
+               data-fallback="${slackWebFallback(p.slack.id)}"
+               onclick="trackSlack(event, 'dm', ${p.id})">
+              💬 mandar DM
+            </a>
+            <a class="slack-btn secondary ${p.slack.presence === 'away' ? 'disabled' : ''}"
+               href="${slackCallUrl(p.slack.id)}"
+               data-fallback="${slackWebFallback(p.slack.id)}"
+               onclick="trackSlack(event, 'call', ${p.id})">
+              📞 chamar no Slack
+            </a>
+          </div>
+          ${p.slack.presence === 'dnd' ? `<div class="detail-value" style="color:var(--text-faint);font-size:11px;margin-top:8px;">⚠️ ${p.name.split(' ')[0]} está em modo "não perturbe" — prefira DM async.</div>` : ''}
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label">💬 bio</div>
+          <div class="detail-value">${p.bio}</div>
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label">🎯 projetos ativos</div>
+          <div class="detail-value detail-mono">${p.projects.join(" · ")}</div>
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label">🧠 stack</div>
+          <div class="tags">
+            ${p.stack.map(s => `<span class="tag">${s}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label">⚡ especialidades</div>
+          <div class="tags">
+            ${p.specialties.map(s => `<span class="tag specialty">${s}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="detail-block" style="border-top:1px solid var(--border);padding-top:14px;">
+          <div class="detail-label">🔒 privacidade</div>
+          <div class="detail-value" style="color:var(--text-faint);font-size:12px;">
+            sinais via opt-in. histórico não exposto. retention 30d. <a href="#" style="color:var(--blue);">ver settings</a>
+          </div>
+        </div>
+      `;
+      document.getElementById("overlay").classList.add("open");
+    }
+
+    function closeDetail() {
+      document.getElementById("overlay").classList.remove("open");
+    }
+
+    document.getElementById("overlay").addEventListener("click", (e) => {
+      if (e.target.id === "overlay") closeDetail();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeDetail();
+    });
+
+    // Slack deeplink handler com fallback web
+    // Tenta abrir o app desktop (slack://). Se falhar em ~500ms, abre fallback web.
+    function trackSlack(event, action, personId) {
+      event.stopPropagation();
+      event.preventDefault();
+      const link = event.currentTarget;
+      if (link.classList.contains("disabled")) return;
+
+      const deeplink = link.getAttribute("href");
+      const fallback = link.getAttribute("data-fallback");
+      const person = PEOPLE.find(x => x.id === personId);
+
+      console.log(`[slack:${action}] → ${person.name} (${person.slack.id})`);
+
+      // Detecta se o blur do window aconteceu = app abriu
+      let appOpened = false;
+      const onBlur = () => { appOpened = true; };
+      window.addEventListener("blur", onBlur, { once: true });
+
+      // Tenta deeplink
+      window.location.href = deeplink;
+
+      // Se em 800ms não houve blur, abre fallback web em nova aba
+      setTimeout(() => {
+        window.removeEventListener("blur", onBlur);
+        if (!appOpened) {
+          window.open(fallback, "_blank", "noopener");
+        }
+      }, 800);
+    }
+
+    // Filter chips (visual only - wireframe)
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
